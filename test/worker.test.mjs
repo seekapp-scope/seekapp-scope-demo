@@ -22,15 +22,14 @@ test('complete API pipeline sends brief to Claude, validates schema and releases
   const h = harness(); const r = await h.worker.fetch(h.req(),h.env); const data = await r.json();
   assert.equal(r.status,200); assert.deepEqual(data.result,result); assert.equal(data.provenance.model,'test-fixture-not-live');
   const api = h.calls.find(c => c.url?.includes('anthropic'));
-  assert.equal(api.body.max_tokens,2400); assert.equal(api.body.output_config.format.type,'json_schema'); assert.equal(JSON.parse(api.body.messages[0].content).client_brief,h.input.brief);
+  assert.equal(JSON.parse(api.body.messages[0].content).output_language,'English'); assert.equal(api.body.max_tokens,2400); assert.equal(api.body.output_config.format.type,'json_schema'); assert.equal(JSON.parse(api.body.messages[0].content).client_brief,h.input.brief);
   const reservation = h.calls.find(c => c.budget?.action==='reserve').budget;
   assert.match(reservation.key,/^[a-f0-9]{64}$/); assert.ok(!JSON.stringify(reservation).includes('192.0.2.1'));
   assert.equal(h.calls.at(-1).budget.action,'release'); assert.equal(r.headers.get('Cache-Control'),'no-store');
 });
-test('Vietnamese output selection reaches Claude as data',async () => {
-  const h=harness(); await h.worker.fetch(h.req({...h.input,language:'vi'}),h.env);
-  assert.equal(JSON.parse(h.calls.find(c=>c.url?.includes('anthropic')).body.messages[0].content).output_language,'Vietnamese');
-  assert.equal(h.calls.find(c=>c.url?.includes('anthropic')).body.max_tokens,3600);
+test('unsupported output languages are rejected before any provider call',async () => {
+  const h=harness(); const r=await h.worker.fetch(h.req({...h.input,language:'vi'}),h.env);
+  assert.equal(r.status,400); assert.equal(h.calls.length,0);
 });
 test('refinement includes source brief, answers and user-edited draft, using existing admission',async()=>{
  const h=harness();const draft=structuredClone(result);draft.proposal='Client requests no payment integration.';

@@ -12,9 +12,9 @@ test('disabled Worker serves the real page, assets, legal pages and no fake live
  await page.goto('/demo');await expect(page.locator('#availability')).toContainText('not enabled');
  await page.selectOption('#example','missing');await expect(page.locator('#brief')).toHaveValue(/salon/);
  await expect(page.locator('#analyze')).toBeDisabled();await expect(page.locator('#result')).toBeHidden();
- await page.selectOption('#language','vi');await expect(page.locator('#brief')).toHaveValue(/salon/);await expect(page.locator('#input-title')).toHaveText('Bắt đầu từ brief');
+ await expect(page.locator('#language')).toHaveCount(0);await expect(page.locator('#input-title')).toHaveText('Start with the brief');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
- await page.getByRole('link',{name:'Bảo mật demo'}).click();await expect(page.locator('h1')).toHaveText('Demo privacy');
+ await page.getByRole('link',{name:'Demo privacy'}).click();await expect(page.locator('h1')).toHaveText('Demo privacy');
  expect(errors).toEqual([]);
 });
 test('live UI accepts a fresh brief, edits and downloads the resulting Markdown',async({page})=>{

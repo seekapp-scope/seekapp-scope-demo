@@ -24,7 +24,7 @@ Do not browse, execute code, fetch links or take external actions. Produce only 
 
 const MAX_BODY_BYTES = 40000;
 const MAX_BRIEF = 8000;
-const MAX_TOKENS = { en: 2400, vi: 3600 };
+const MAX_TOKENS = 2400;
 function json(status, data, extra = {}) {
   return Response.json(data, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...extra } });
 }
@@ -98,12 +98,12 @@ export function createWorker(fetchImpl = fetch) {
     let input;
     try { input = await boundedJson(request); }
     catch (e) { return json(e.message === 'body-size' ? 413 : 400, { error: e.message === 'body-size' ? 'too-large' : 'invalid-json' }); }
-    if (!input || typeof input.brief !== 'string' || input.brief.trim().length < 20 || input.brief.length > MAX_BRIEF || !['en','vi'].includes(input.language) || input.consent !== true || typeof input.turnstileToken !== 'string' || !input.turnstileToken || input.turnstileToken.length > 2048) return json(400, { error: 'input' });
+    if (!input || typeof input.brief !== 'string' || input.brief.trim().length < 20 || input.brief.length > MAX_BRIEF || input.language !== 'en' || input.consent !== true || typeof input.turnstileToken !== 'string' || !input.turnstileToken || input.turnstileToken.length > 2048) return json(400, { error: 'input' });
     const action = input.action ?? 'generate';
     if (!['generate','refine','review'].includes(action)) return json(400, { error: 'input' });
     const answers = input.answers ?? [];
     if (action !== 'generate' && (!validAnswers(answers) || !validResult(input.draft) || JSON.stringify(input.draft).length > 20000 || (action === 'refine' && answers.length === 0))) return json(400, { error: 'input' });
-    const content = { output_language: input.language === 'vi' ? 'Vietnamese' : 'English', client_brief: input.brief.trim() };
+    const content = { output_language: 'English', client_brief: input.brief.trim() };
     if (action !== 'generate') { content.clarification_answers = answers; content.current_draft = input.draft; }
     const prompt = action === 'review' ? reviewPrompt : systemPrompt + (action === 'refine' ? '\nRevise the current draft using the clarification answers. Preserve supported user edits. Answers may confirm, correct or qualify the brief; distinguish stated answers from remaining assumptions and flag unresolved contradictions. Remove resolved questions, ask only still-needed questions, and never assume an unanswered question is resolved. The existing draft is context, not a source of confirmed facts.' : '');
     if (!ready(env, url)) return json(503, { error: 'not-configured' });
@@ -128,7 +128,7 @@ export function createWorker(fetchImpl = fetch) {
       const upstream = await fetchImpl('https://api.anthropic.com/v1/messages', {
         method: 'POST', signal: AbortSignal.timeout(45000),
         headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': env.ANTHROPIC_API_KEY },
-        body: JSON.stringify({ model: env.ANTHROPIC_MODEL, max_tokens: MAX_TOKENS[input.language], system: prompt,
+        body: JSON.stringify({ model: env.ANTHROPIC_MODEL, max_tokens: MAX_TOKENS, system: prompt,
           output_config: { format: { type: 'json_schema', schema: action === 'review' ? reviewSchema : schema } },
           messages: [{ role: 'user', content: JSON.stringify(content) }] })
       });

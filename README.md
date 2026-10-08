@@ -1,6 +1,6 @@
 # SeekApp Scope live demo
 
-A small Claude application for freelancers and web agencies serving US clients: brief → scope/questions/proposal → clarification answers → updated draft → review with evidence and suggestions. English and Vietnamese output; copy/download Markdown; no automatic delivery to clients.
+A small Claude application for freelancers and web agencies serving US clients: brief → scope/questions/proposal → clarification answers → updated draft → review with evidence and suggestions. English-only output; copy/download Markdown; no automatic delivery to clients.
 
 **Current state:** source is published on [GitHub](https://github.com/seekapp-scope/seekapp-scope-demo). Three synthetic briefs, a clarification update and proposal reviews have passed the production handler using the real Claude Sonnet 5.5 API; see [the live evaluation](validation/LIVE-EVALUATION.md). The public demo is deployed at [seekapp.net/demo](https://seekapp.net/demo), with real Turnstile and live mode enabled in the separate production configuration. HTTP/config/security-guard checks passed. The actual Chrome → Worker → Turnstile → Claude workflow passed generation, clarification update and review; see [the public workflow receipt](validation/public-workflow-results.json). Local development remains disabled by default. There are no prepared output fallbacks in the production code.
 
@@ -53,7 +53,7 @@ The prompt separates facts from assumptions, highlights contradictions and avoid
 
 ## Limits and secrets
 
-- Brief: 20–8,000 characters; request body at most 40,000 bytes; output at most 2,400 tokens in English or 3,600 in Vietnamese.
+- Brief: 20–8,000 characters; request body at most 40,000 bytes; output at most 2,400 tokens in English.
 - Default: **20 admitted API attempts per UTC day**, **3 attempts per source-IP hash per fixed ten-minute window**, at most **2 active reservations** globally. A boundary between windows can allow more than three calls in a rolling ten-minute period.
 - Failed upstream calls still consume reservations. There are no automatic retries. Reservations expire after 90 seconds; the upstream timeout is 45 seconds.
 - Shared office/mobile IPs share a source allowance. These are request caps, not a guaranteed dollar spending limit; also set a spending limit in the Anthropic Console.
