@@ -74,3 +74,8 @@ Generation produced an editable scope, questions, risks and proposal for the fic
 The UI wait selected for refinement was inappropriate: the update clears submitted answer fields, so the update button stays disabled even after success. That wait timed out; the new request ID and updated draft established actual success. No retry or extra paid call was made.
 
 Receipt: `validation/public-workflow-results.json`, containing fictional input context, actual refined output, review text and the three app request IDs. UI provenance is application metadata, not independent Anthropic attestation. Public browser-to-Claude validation is now completed for this one English workflow and browser session; it does not establish all clients or future provider availability.
+
+
+## Turnstile Non-Interactive — owner-requested production setting change
+
+Changed only the existing demo widget from Managed to Non-Interactive through Cloudflare API, then read back its configuration. The widget name, hostnames, public site key and server secret remained unchanged. No Worker redeployment or secret rotation was required. Updated the setup helper so future widget creation uses Non-Interactive. Public config still reports enabled; a POST with an invalid verification token still returns HTTP 403 / verification before Claude or budget admission. No paid Claude request was made for this change. Receipt: `validation/turnstile-mode-change.json`.

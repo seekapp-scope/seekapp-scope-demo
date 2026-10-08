@@ -1,0 +1,14 @@
+{
+  "modeBefore": "managed",
+  "modeAfter": "non-interactive",
+  "name": "SeekApp Scope public demo",
+  "domains": [
+    "seekapp-scope-demo.canemmobile.workers.dev",
+    "seekapp.net"
+  ],
+  "sitekeyUnchanged": true,
+  "secretUnchanged": true,
+  "checkedAtUtc": "2026-10-08T17:53:04.335496+00:00",
+  "serverVerificationGuard": "invalid token rejected: HTTP 403 / verification",
+  "liveConfigEnabled": true
+}

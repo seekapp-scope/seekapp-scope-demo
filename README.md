@@ -73,7 +73,7 @@ node scripts/deploy.mjs --check
 node scripts/deploy.mjs --execute
 ```
 
-The read-only check inventories existing routes, Workers and Turnstile widgets. Execution holds on conflicting routes or an unrelated Worker, deploys disabled on the account's workers.dev hostname, creates a managed Turnstile widget for the exact two hosts, stores secrets through stdin, and validates public assets/config and API guards before adding `/demo*` and `/api/scope*` routes. It generates `wrangler.production.jsonc` containing public settings only and an ignored `.wrangler/deployment-receipt.json`. It preserves any existing rate-limit salt and refuses to repeat initial setup over an already live Worker. Actual browser Turnstile-to-Claude validation is a separate check; successful static checks do not establish it.
+The read-only check inventories existing routes, Workers and Turnstile widgets. Execution holds on conflicting routes or an unrelated Worker, deploys disabled on the account's workers.dev hostname, creates a non-interactive Turnstile widget for the exact two hosts, stores secrets through stdin, and validates public assets/config and API guards before adding `/demo*` and `/api/scope*` routes. It generates `wrangler.production.jsonc` containing public settings only and an ignored `.wrangler/deployment-receipt.json`. It preserves any existing rate-limit salt and refuses to repeat initial setup over an already live Worker. Actual browser Turnstile-to-Claude validation is a separate check; successful static checks do not establish it.
 
 ### Subsequent production updates
 
@@ -129,3 +129,5 @@ node scripts/live-check.mjs --allow-paid --key-file /path/to/api.txt
 The script exercises the production request handler with real Claude responses, while replacing only Siteverify with a local test response and using an in-memory instance of the budget class. That substitution exists only in the explicitly invoked script, not in the public API. The separate runtime test validates real SQLite budget storage. Receipts contain only fictional briefs, outputs and provider metadata, not credentials.
 
 Use `--workflow` to run two checks using the recorded successful booking brief: a clarification update and a review of a deliberately unsupported delivery/price promise. It writes a separate receipt rather than overwriting the original three-brief evaluation.
+
+The production Turnstile widget now uses **Non-Interactive** mode: visitors are not asked to click a verification checkbox. Server-side success/hostname/action checks and the existing request limits remain enforced. The founder explicitly requested this configuration change; the site key and secret were retained.

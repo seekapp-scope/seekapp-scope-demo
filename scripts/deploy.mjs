@@ -132,7 +132,7 @@ try {
     }
   } else {
     widget = await api(`accounts/${account}/challenges/widgets`, 'POST', {
-      name: widgetName, mode: 'managed', domains: ['seekapp.net', new URL(preview).hostname]
+      name: widgetName, mode: 'non-interactive', domains: ['seekapp.net', new URL(preview).hostname]
     });
   }
   if (!widget.secret || !widget.sitekey) throw new Error('Turnstile widget did not provide server and public keys');
