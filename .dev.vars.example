@@ -1,0 +1,6 @@
+# Copy to .dev.vars for local configuration. Never commit real keys.
+ANTHROPIC_API_KEY=
+TURNSTILE_SECRET_KEY=
+RATE_LIMIT_SALT=
+# Keep disabled until paid API calls are explicitly authorized.
+LIVE_ENABLED=false

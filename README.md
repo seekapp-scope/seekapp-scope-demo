@@ -1,0 +1,89 @@
+# SeekApp Scope live demo
+
+A small Claude application for freelancers and web agencies: a client brief becomes a project scope, clarification questions, risks and an editable proposal. English and Vietnamese output; copy/download Markdown; no automatic delivery to clients.
+
+**Current state:** implementation and local tests are available. Live API calls are disabled by default. Local mocked tests are not evidence of a completed live Claude call. There are no prepared output fallbacks in the production code.
+
+Founder: Truong Can Em, Vietnam · contact@seekapp.net · [SeekApp](https://seekapp.net).
+
+## Run locally
+
+Requires Node.js 22 or newer, npm and Chrome (for browser tests).
+
+```sh
+npm ci
+npm run dev
+```
+
+Open http://127.0.0.1:8787/demo. Sample selectors load brief text; analysis remains disabled until the service is configured. The local development server does not read keys from any other project.
+
+```sh
+npm run check
+npm test
+npm run test:browser
+npm run test:runtime
+npm run build
+```
+
+`build` is a **dry run**, not a production deployment. `test` injects mock Siteverify/Claude transports; browser tests mock provider results only inside the test runner. Browser tests use an isolated headless Chrome profile. They do not open your personal browser session. They do not charge Anthropic.
+
+`test:runtime` validates the actual SQLite Durable Object in local workerd, without external provider calls. The locked Miniflare development dependency follows the version supplied with the installed Wrangler; it is not shipped to browsers or included in the deployed Worker.
+
+## How Claude is used
+
+1. The browser submits the brief, output language, consent and Turnstile token to `POST /api/scope` on its own origin.
+2. The Worker checks origin, method, content type, bounded body length and input; validates Turnstile success, hostname and action server-side.
+3. A singleton SQLite Durable Object atomically reserves the daily and per-source budget and a concurrent-request lease.
+4. The Worker calls `https://api.anthropic.com/v1/messages`, using `claude-sonnet-5-5` by default and JSON-schema structured output. The model is configurable; the account must have access to it.
+5. A complete validated response becomes editable fields. Truncated, refused, malformed or failed responses become errors, never canned results. The response records the returned model, generation time and a demo request ID. This ID is for troubleshooting; it is not an independent proof of authenticity.
+
+The prompt separates facts from assumptions, highlights contradictions and avoids inventing prices, schedules or promises. This is a single Claude call, without browsing, tools, MCP, repository ingestion or external actions. Model outputs still need human review.
+
+## Limits and secrets
+
+- Brief: 20–8,000 characters; request body at most 40,000 bytes; output at most 2,400 tokens.
+- Default: **20 admitted API attempts per UTC day**, **3 attempts per source-IP hash per fixed ten-minute window**, at most **2 active reservations** globally. A boundary between windows can allow more than three calls in a rolling ten-minute period.
+- Failed upstream calls still consume reservations. There are no automatic retries. Reservations expire after 90 seconds; the upstream timeout is 45 seconds.
+- Shared office/mobile IPs share a source allowance. These are request caps, not a guaranteed dollar spending limit; also set a spending limit in the Anthropic Console.
+- Turnstile is mandatory for live calls. Failed verification does not reach Anthropic. No unsafe bypass flag is provided.
+- `ANTHROPIC_API_KEY`, `TURNSTILE_SECRET_KEY` and `RATE_LIMIT_SALT` are server secrets, never browser configuration. Durable storage contains salted IP hashes and counters, not briefs or proposals. Logs intentionally omit prompt/output text.
+- No API key, `.env`, `.dev.vars`, local account credentials or third-party project files should be committed. Use the committed `.dev.vars.example` only as a blank template.
+
+## Deployment after owner approval
+
+Production deployment, domain routes, GitHub push and paid API validation are separate operator-approved steps. Do not overwrite the existing SeekApp Pages site with this project.
+
+1. Publish this **Worker with Static Assets**, initially with `LIVE_ENABLED=false`, to a new Workers preview hostname. This is not a static-only Pages upload; the API and Durable Object require a Worker deployment.
+2. Create a Turnstile widget permitting the exact demo hostname(s). Configure `TURNSTILE_SITE_KEY`; keep the widget action `scope-demo`.
+3. Set `ALLOWED_ORIGINS` to the exact deployed HTTPS origin(s), comma-separated; no trailing slash. Keep localhost only for local development.
+4. Store the three secrets using `wrangler secret put ANTHROPIC_API_KEY`, `wrangler secret put TURNSTILE_SECRET_KEY` and `wrangler secret put RATE_LIMIT_SALT`. Use a randomly generated salt. Enter secrets interactively; never put them in shell history or this README.
+5. After approval for API costs, set `LIVE_ENABLED=true`, redeploy and run the three evaluation briefs below through the live UI. Record actual observations, not mocked results.
+6. Once accepted, add same-zone Worker routes `seekapp.net/demo*` and `seekapp.net/api/scope*`. All demo assets and demo legal pages use `/demo…` paths. Leave the existing homepage and its assets under Pages. Review routes against any existing Workers routes before changing them.
+7. Set `SOURCE_URL` to the actual public GitHub repo URL to expose the **Source on GitHub** link. It stays hidden until configured; no invented repository link is shown.
+
+The demo uses `/demo-privacy` and `/demo-terms` for disclosures specific to live processing. Before public release, update the existing site's privacy policy to link to the live-demo notice and remove any claim that all public demo briefs remain exclusively in the browser. Landing-page wording should describe only the live checks actually completed.
+
+### Evaluation briefs
+
+| Case | What to inspect in the real output |
+|---|---|
+| Clear agency website | Five requested pages preserved; no invented budget/date; payments/accounts/blog excluded |
+| Salon booking with missing details | Questions about payments, cancellations, staff availability and content; no invented launch commitment |
+| Contradictory online shop | Flags customer-history versus no-data-storage conflict and tomorrow launch versus next-week assets; no unconditional promise |
+
+Use fictional examples. Never publish a customer's brief, provider keys or unreviewed output as an evaluation artifact.
+
+## Git and GitHub
+
+This folder is a standalone Git repository. The local commit author is Truong Can Em <contact@seekapp.net>. No remote repository is created or pushed by local setup.
+
+After the owner chooses a GitHub account and confirms publishing, create a public repository named `seekapp-scope-demo`, add its actual URL as `origin`, and push `main`. Review the tracked files first. The application works without a public source repository; the source link is for transparency, not an Anthropic program requirement.
+
+## Documentation
+
+- [Claude structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs)
+- [Cloudflare Worker assets routing](https://developers.cloudflare.com/workers/static-assets/routing/worker-script/)
+- [Server-side Turnstile validation](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/)
+- [Durable Objects](https://developers.cloudflare.com/durable-objects/)
+
+See [VALIDATION.md](VALIDATION.md) for the local validation receipt and pending live verification.

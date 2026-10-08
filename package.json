@@ -1,0 +1,22 @@
+{
+  "name": "seekapp-scope-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "wrangler dev --local --ip 127.0.0.1",
+    "check": "node --check src/index.mjs && node --check src/worker.mjs && node --check src/budget.mjs && node --check public/demo-assets/app.js",
+    "test": "node --test test/*.test.mjs",
+    "test:browser": "playwright test",
+    "test:runtime": "npm run build && node --test test/runtime/*.test.mjs",
+    "build": "wrangler deploy --dry-run --outdir .build"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "miniflare": "5.20261006.0-alpha",
+    "wrangler": "^4.0.0"
+  }
+}
