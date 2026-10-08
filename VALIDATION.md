@@ -63,3 +63,14 @@ Public probes: 11 paths returned HTTP 200, including the homepage, demo assets, 
 An asset probe immediately after creating routes received 404; subsequent probes received 200. The helper now bounds retries of transient read-only asset checks to six five-second waits; paid POSTs are never retried. Python's default user agent received 403/1010 on the workers.dev preview while Node deployment probes succeeded there; all recorded seekapp.net probes passed. This observation does not identify the underlying Cloudflare rule or an Anthropic reviewer.
 
 Chrome loaded the actual public demo and its GitHub link. A contained-browser launch failed while installing network controls before navigation; that session was closed. A separate task-owned Chrome loaded the page normally. Its real managed Turnstile widget requested an interactive human checkbox. No challenge was solved automatically, token substituted or test bypass added. Successful public browser-to-Claude generation remains pending operator verification; prior real Claude checks were local handler tests.
+
+
+## Actual public browser workflow — 9 October 2026 Vietnam
+
+The operator manually completed the initial managed Turnstile verification in the retained task-owned Chrome. The exact demo tab remained bound to its original target. Three actions were then run against https://seekapp.net/demo: generate, refine and review. Each returned actual `claude-sonnet-5-5` output through the public Worker, its real SQLite budget and real server-side Siteverify. No fixture transports, verification bypasses or substituted tokens were used. The refreshed widgets for refinement and review completed without another operator click.
+
+Generation produced an editable scope, questions, risks and proposal for the fictional salon brief. Refinement correctly incorporated three supplied answers: no online payments/deposits, cancellation by contacting the salon at least 24 hours ahead with no fee, and owner-supplied content. Review identified the deliberately appended unsupported tomorrow/$99 guarantee and its contradiction with the draft's own caveats as HIGH. A LOW finding concerning a conditional proposed deliverable remains debatable; successful execution does not establish perfect model judgment.
+
+The UI wait selected for refinement was inappropriate: the update clears submitted answer fields, so the update button stays disabled even after success. That wait timed out; the new request ID and updated draft established actual success. No retry or extra paid call was made.
+
+Receipt: `validation/public-workflow-results.json`, containing fictional input context, actual refined output, review text and the three app request IDs. UI provenance is application metadata, not independent Anthropic attestation. Public browser-to-Claude validation is now completed for this one English workflow and browser session; it does not establish all clients or future provider availability.

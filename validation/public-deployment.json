@@ -98,10 +98,11 @@
       "error": "verification"
     }
   ],
-  "successfulRealBrowserTurnstileToClaude": "pending human verification",
+  "successfulRealBrowserTurnstileToClaude": "passed: generate, refine and review with real Turnstile and real Claude",
   "notes": [
     "An immediate post-route asset probe returned 404; subsequent reads returned 200.",
     "Python urllib with its default user agent returned 403/1010 on workers.dev, while Node deployment probes passed; seekapp.net probes passed.",
     "Blocked API guard probes did not return Claude output."
-  ]
+  ],
+  "workflowReceipt": "public-workflow-results.json"
 }
