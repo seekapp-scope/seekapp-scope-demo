@@ -1,0 +1,159 @@
+{
+  "testedAt": "2026-10-08T17:16:30.817Z",
+  "requestedModel": "claude-sonnet-5-5",
+  "actualModel": "claude-sonnet-5-5",
+  "maxPaidRequests": 3,
+  "provider": "Anthropic live API",
+  "scope": "Production Worker handler and real Claude; Siteverify transport mocked only in this local script, budget class uses in-memory storage. Public Turnstile and deployment not tested.",
+  "cases": [
+    {
+      "id": "review-unsupported-promise",
+      "action": "review",
+      "language": "en",
+      "brief": "We need a website for our local salon so customers can book appointments. It should look good on mobile. We have three staff members and different services. We want to launch soon. We have not decided whether bookings need payment, how cancellations work, or who will provide the content.",
+      "answers": [
+        {
+          "question": "Should customers pay or leave a deposit when booking? If yes, which payment provider and which payment methods?",
+          "answer": "No online payments or deposits. Customers pay at the salon."
+        },
+        {
+          "question": "What is the cancellation and rescheduling policy (notice period, fees, no-show handling), and should customers be able to cancel online?",
+          "answer": "Customers may cancel or reschedule up to 24 hours before the appointment."
+        },
+        {
+          "question": "Who will provide the content: service list with prices and durations, staff bios, photos, logo, and opening hours? By when?",
+          "answer": "The salon owner supplies and approves all text, service prices, photos and opening hours."
+        }
+      ],
+      "draft": {
+        "scope": {
+          "confirmed": [
+            "Client needs a website for a local salon",
+            "Customers must be able to book appointments through the site",
+            "The site must look good on mobile",
+            "The salon has three staff members and offers different services",
+            "Client wants to launch soon (no specific date given; unconfirmed expectation)",
+            "Stated answer: no online payments or deposits; customers pay at the salon",
+            "Stated answer: customers may cancel or reschedule up to 24 hours before the appointment",
+            "Stated answer: the salon owner supplies and approves all text, service prices, photos and opening hours"
+          ],
+          "deliverables": [
+            "Proposed: mobile-first responsive website (e.g., home, services, team, contact/location pages)",
+            "Proposed: online booking flow for services and the three staff members, without payment",
+            "Proposed: booking flow that applies the 24-hour cancellation/rescheduling cutoff, subject to confirming how customers do it online",
+            "Proposed: services list, staff profiles and opening hours built from owner-supplied and approved content",
+            "Proposed: basic testing on common mobile and desktop browsers before launch",
+            "Proposed: launch support, with timing to be agreed once content and scope are final"
+          ],
+          "assumptions": [
+            "'Soon' has no fixed date; any date is an unconfirmed client expectation until agreed",
+            "Booking may use a third-party tool or a custom build; approach is undecided and needs approval",
+            "Cancellation and rescheduling are assumed to be self-service online up to 24 hours before; not yet confirmed",
+            "Fees for late cancellations or no-shows are not stated; assumed none, pending confirmation",
+            "Content provided by the owner is assumed to include logo and staff bios, but this was not stated; no delivery dates were given",
+            "Domain name and hosting are assumed to be arranged by the client or agreed separately",
+            "Each staff member has their own availability and set of services, not yet confirmed"
+          ],
+          "out_of_scope": [
+            "Payment processing or deposits (client confirmed none needed)",
+            "Copywriting, photography and branding, since the owner supplies content, unless separately agreed",
+            "Ongoing maintenance, marketing and SEO beyond basic setup unless agreed",
+            "Integration with existing salon software unless the client confirms it exists and requests it",
+            "Email/SMS reminder systems unless confirmed"
+          ]
+        },
+        "questions": [
+          "What does 'soon' mean? Is there a target launch date or event driving the timeline?",
+          "By what date can the owner provide the content (service list with durations, prices, photos, opening hours, staff bios, logo)?",
+          "Should customers cancel or reschedule themselves online, or by phone/email? Are there any fees or no-show rules for appointments cancelled inside 24 hours?",
+          "Does the salon already use a booking system or calendar (e.g., Google Calendar, paper diary, other software) that must be connected or replaced?",
+          "Can customers choose a specific staff member, or just a service and time? Does each staff member offer all services?",
+          "Who will manage bookings day to day, and how should the salon be notified (email, SMS, dashboard)?",
+          "Do you already have a domain name, hosting and a brand identity? Is there a budget range for the project and any monthly tool fees?"
+        ],
+        "proposal": "Thank you for your answers. Here is an updated draft based on what you've confirmed.\n\nWhat we understand: you need a mobile-friendly website for your salon where customers can view services and staff and book appointments. There will be no online payments or deposits, as customers pay at the salon. Customers can cancel or reschedule up to 24 hours before their appointment. You will supply and approve all text, service prices, photos and opening hours.\n\nProposed approach: a clean, mobile-first website with home, services, team and contact/location pages, plus an online booking flow where customers choose a service, a staff member (if you want that option) and an available time. The booking flow would reflect your 24-hour cancellation and rescheduling rule. We would test on common phones and desktop browsers before launch.\n\nStill to be decided, so the following is conditional:\n1. Cancellation details: we need to know whether customers should cancel or reschedule themselves online, and whether any fees or no-show rules apply.\n2. Content: we need a date for when your content will be ready, and confirmation that this includes the logo and staff bios. Launch timing depends on it.\n3. Existing tools: if you already use a booking system or calendar, the approach may change.\n4. Booking approach: whether we use a third-party booking tool or a custom build is not yet decided. This affects cost and any monthly fees.\n5. Timing: you mentioned launching soon. We cannot commit to a date until content, booking approach and scope are agreed. Once we have your answers, we can propose a realistic schedule and price.\n\nNext steps: please reply to the remaining questions, and we will update this draft with a confirmed scope, timeline and price for your review. Nothing here is final until both sides have approved it.\n\nWe guarantee a complete launch tomorrow for $99.",
+        "risks": [
+          "Undefined launch date: 'soon' may conflict with content delivery timing, creating unrealistic expectations",
+          "No content delivery date: owner-supplied text, prices and photos are a common cause of launch delays",
+          "Cancellation handling is only partly defined: fees, no-shows and whether customers cancel online are unclear, which could cause rework",
+          "Booking data and accounts: customer personal data and calendar access raise privacy, consent and account-ownership questions, and any third-party tool may carry fees",
+          "Possible existing booking system or calendar not disclosed, which could require integration or migration",
+          "Three staff with different services and availability can make scheduling rules more complex than expected",
+          "No budget stated, so the chosen approach (third-party tool versus custom build) may not fit expectations"
+        ]
+      },
+      "providerStatus": 200,
+      "providerRequestId": "req_011Cfq9auEQvsQpYexHSQMNr",
+      "providerStopReason": "end_turn",
+      "providerUsage": {
+        "input_tokens": 3180,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 1156,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "demoStatus": 200,
+      "elapsedMs": 8900,
+      "output": {
+        "summary": "The draft mostly keeps unconfirmed items clearly labelled as conditional and reflects the client's answers accurately. One serious defect: the proposal ends with an unsupported guarantee of launch tomorrow for $99, which contradicts the rest of the draft. There is also a minor tension about staff selection and about cancellation being described as confirmed.",
+        "findings": [
+          {
+            "category": "unsupported_commitment",
+            "severity": "high",
+            "issue": "The proposal makes an unconditional price and deadline guarantee that nothing in the brief or answers supports.",
+            "evidence": "Proposal: \"We guarantee a complete launch tomorrow for $99.\" The brief gives no budget or date, and the content delivery date, booking approach and scope are all still undecided.",
+            "suggestion": "Remove the sentence. Give a price and timeline only after the booking approach, content dates and scope are confirmed."
+          },
+          {
+            "category": "contradiction",
+            "severity": "high",
+            "issue": "The guaranteed launch and price contradict the draft's own statements that timing and cost cannot yet be committed to.",
+            "evidence": "\"We cannot commit to a date until content, booking approach and scope are agreed. Once we have your answers, we can propose a realistic schedule and price.\" Also \"Nothing here is final until both sides have approved it.\" Versus \"We guarantee a complete launch tomorrow for $99.\"",
+            "suggestion": "Delete the guarantee so the proposal consistently says date and price are pending."
+          },
+          {
+            "category": "unconfirmed_assumption",
+            "severity": "low",
+            "issue": "The proposal's summary says customers can cancel or reschedule, which is correct per the client's answer. However, the proposed approach states the booking flow \"would reflect\" the rule, while the mechanism (online self-service vs phone/email) is unconfirmed. The proposal does flag this as pending, so the risk is only that readers take online cancellation as a given.",
+            "evidence": "Client answer: \"Customers may cancel or reschedule up to 24 hours before the appointment\" (no channel stated). Draft: \"Customers can cancel or reschedule up to 24 hours before their appointment.\"",
+            "suggestion": "Keep the explicit note that the channel (online vs phone/email) is pending, and avoid describing online self-service as agreed."
+          },
+          {
+            "category": "unconfirmed_assumption",
+            "severity": "low",
+            "issue": "The scope's confirmed list lists \"Client wants to launch soon\" together with an unconfirmed note, and the booking flow is described as covering the three staff members individually, though per-staff availability and services are unconfirmed.",
+            "evidence": "Deliverables: \"online booking flow for services and the three staff members, without payment\"; assumptions: \"Each staff member has their own availability and set of services, not yet confirmed.\" The proposal says staff choice is \"(if you want that option)\".",
+            "suggestion": "Word the deliverable as conditional on whether customers can choose a staff member, and on how services map to staff."
+          }
+        ],
+        "open_questions": [
+          "Is there a target launch date or event driving the \"soon\" timeline?",
+          "When will the owner deliver content, and does it include logo and staff bios?",
+          "Should customers cancel or reschedule online, and do any fees or no-show rules apply?",
+          "Does the salon use an existing booking system or calendar that must be connected or replaced?",
+          "Can customers choose a specific staff member, and does each staff member offer all services?",
+          "Who manages bookings and how should they be notified?",
+          "Are domain, hosting, brand identity and a budget range already in place?"
+        ]
+      },
+      "provenance": {
+        "provider": "Anthropic",
+        "model": "claude-sonnet-5-5",
+        "requestId": "fae88f31-652e-4786-a063-d6f51a8248a5",
+        "generatedAt": "2026-10-08T17:16:39.717Z"
+      },
+      "usage": {
+        "inputTokens": 3180,
+        "outputTokens": 1156
+      }
+    }
+  ]
+}

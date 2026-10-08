@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { result } from '../fixtures.mjs';
+import { result, review } from '../fixtures.mjs';
 
 // These mocks run only in automated tests. Production never serves fake drafts.
 async function mockLive(page, error = null) {
@@ -32,4 +32,24 @@ test('live UI accepts a fresh brief, edits and downloads the resulting Markdown'
 test('upstream failure remains an error without a replacement sample result',async({page})=>{
  await mockLive(page,'incomplete');await page.goto('/demo');await page.selectOption('#example','conflict');await page.locator('#consent').check();await page.locator('#analyze').click();
  await expect(page.locator('#status')).toContainText('complete draft');await expect(page.locator('#result')).toBeHidden();
+});
+test('clarification updates draft; check uses current edits and becomes stale after editing',async({page})=>{
+ await mockLive(page);
+ const requests=[];
+ await page.route('**/api/scope',r=>{
+  const body=r.request().postDataJSON();requests.push(body);
+  const updated=structuredClone(result);updated.scope.confirmed.push('No online payments or deposits.');updated.questions=['Who supplies content?'];
+  return r.fulfill({json:{action:body.action,...(body.action==='review'?{review}:{result:body.action==='refine'?updated:result}),provenance:{model:'test-fixture-not-live',generatedAt:'2026-10-09T00:00:00Z',requestId:'workflow-test'}}});
+ });
+ await page.goto('/demo');
+ await expect(page.locator('#turnstile')).toContainText('Test-only security verification');
+ // Provide a fresh verification token after every simulated single-use check.
+ await page.evaluate(()=>{const render=window.turnstile.render;window.turnstile.render=(s,o)=>{window.testVerification=o.callback;return render(s,o);};window.seekAppTurnstileReady();window.turnstile.reset=()=>window.testVerification('next-test-only-token');});
+ await page.selectOption('#example','missing');await page.locator('#consent').check();await page.locator('#analyze').click();await expect(page.locator('#result')).toBeVisible();
+ await expect(page.locator('#refine')).toBeDisabled();await page.locator('#answer-0').fill('No, no online payments or deposits.');await page.locator('#refine').click();
+ await expect(page.locator('#output-confirmed')).toHaveValue(/No online payments/);expect(requests[1].answers[0].answer).toContain('no online payments');
+ await page.locator('#output-proposal').fill('We guarantee delivery tomorrow.');await page.locator('#review').click();await expect(page.locator('#review-report')).toBeVisible();
+ expect(requests[2].draft.proposal).toBe('We guarantee delivery tomorrow.');expect(requests[2].answers[0].answer).toContain('no online payments');await expect(page.locator('#review-report')).toContainText('Tomorrow delivery');
+ await page.locator('#output-proposal').fill('Delivery date remains to be agreed.');await expect(page.locator('#review-report')).toBeHidden();await expect(page.locator('#status')).toContainText('changed');
+ await page.locator('#brief').fill('A different client wants a new website with no connection to the previous brief.');await expect(page.locator('#result')).toBeHidden();await expect(page.locator('#review')).toBeDisabled();
 });

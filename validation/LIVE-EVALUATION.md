@@ -19,3 +19,16 @@ These observations are a small, producer-reviewed sample. Some lists exceed the 
 - [Paid check script](../scripts/live-check.mjs): runs the production Worker handler against the real Claude API. Siteverify is mocked only within this standalone local script, budget storage is in memory, and no key is written to the receipts.
 
 No public deployment, real Turnstile check, production route change or GitHub push was performed. Public live mode remains disabled until configured and separately authorized.
+
+
+## Follow-up workflow evaluation
+
+| Action | Demo HTTP | Duration | Input / output tokens | Observed behavior |
+|---|---:|---:|---:|---|
+| Refine booking scope with three answers | 200 | 12.862 s | 3,011 / 1,829 | Adds no online payments/deposits, 24-hour cancellation policy and owner-supplied content as stated answers. Keeps staff selection, cancellation channel, launch date and content schedule unresolved. |
+| Review deliberately unsupported promise | 200 | 19.458 s | 2,980 / 2,023 | Identifies the added unconditional tomorrow/$99 promise and contradiction with the conditional draft. Also returns several arguably overbroad findings. |
+| Review with more precise finding criteria | 200 | 8.900 s | 3,180 / 1,156 | Still identifies the unsupported guarantee; avoids previous missing-requirement findings about unstated desirable features. Some low-severity concerns remain debatable. |
+
+The stricter prompt distinguishes explicit missing requirements from optional questions and warns against treating labelled assumptions or conditional proposals as commitments. These two review samples do not establish reliable precision across proposals. Read the quoted evidence before acting; no automatic approval or rewrite is offered.
+
+[Initial workflow receipt](live-workflow-results.json) · [Review retry receipt](live-workflow-review-retry.json).

@@ -19,62 +19,121 @@ export const examples = {
   conflict:'Làm cửa hàng online có giỏ hàng, thanh toán, tài khoản khách và lịch sử mua hàng. Không muốn lưu dữ liệu khách hàng ở bất cứ đâu. Toàn bộ website phải ra mắt ngày mai nhưng danh sách sản phẩm, giá, ảnh và nội dung đến tuần sau mới có. Chưa chọn cổng thanh toán và chưa thống nhất ngân sách.'
  }
 };
+Object.assign(copy.en, { clarifyTitle:'Answer the open questions',clarifyHelp:'Answer what you know. Leave unknown items empty; they remain unresolved. Each update or review uses one analysis allowance.',refine:'Update scope and proposal',checkTitle:'Check the current draft',checkHelp:'Claude compares your edited draft against the brief and answers. Review suggestions yourself; this is not approval.',review:'Check with Claude',answerPlaceholder:'Your answer, or leave empty if unknown (max. 1,000 characters)',refining:'Claude is updating the scope and proposal…',reviewing:'Claude is checking the current draft…',updated:'Draft updated using your answers. Review the changes.',reviewed:'Check complete. Assess the findings before sharing.',stale:'The draft changed. Run the check again for the current version.',noFindings:'No supported issue identified in this check. Human review is still required.',answerRequired:'Provide at least one answer. At most 20 answers and 6,000 answer characters across updates.',priorAnswers:'Previously submitted answers',checkExport:'Claude review of this draft',openQuestions:'Remaining questions',evidence:'Evidence',suggestion:'Suggested change' });
+Object.assign(copy.vi, { clarifyTitle:'Trả lời các câu hỏi còn mở',clarifyHelp:'Trả lời phần bạn biết. Để trống phần chưa rõ; công cụ sẽ giữ là chưa xác nhận. Mỗi lần cập nhật hoặc kiểm tra dùng một lượt phân tích.',refine:'Cập nhật scope và proposal',checkTitle:'Kiểm tra bản nháp hiện tại',checkHelp:'Claude đối chiếu bản nháp đã sửa với brief và câu trả lời. Bạn tự đánh giá đề xuất; kết quả không phải phê duyệt.',review:'Kiểm tra bằng Claude',answerPlaceholder:'Câu trả lời, hoặc để trống nếu chưa rõ (tối đa 1.000 ký tự)',refining:'Claude đang cập nhật scope và proposal…',reviewing:'Claude đang kiểm tra bản nháp…',updated:'Đã cập nhật theo câu trả lời. Kiểm tra các thay đổi.',reviewed:'Đã kiểm tra. Đánh giá các phát hiện trước khi gửi.',stale:'Bản nháp đã thay đổi. Kiểm tra lại phiên bản hiện tại.',noFindings:'Chưa phát hiện vấn đề có căn cứ trong lượt này. Bạn vẫn cần tự kiểm tra.',answerRequired:'Nhập ít nhất một câu trả lời. Tối đa 20 câu và tổng 6.000 ký tự trả lời qua các lần cập nhật.',priorAnswers:'Câu trả lời đã gửi',checkExport:'Nhận xét Claude về bản nháp này',openQuestions:'Câu hỏi còn lại',evidence:'Căn cứ',suggestion:'Đề xuất sửa' });
 let language = 'en', enabled = false, loading = false, token = '', widgetId, metadata, edited = false;
+let sourceBrief = '', answerHistory = [], lastReview = null;
 const t = k => copy[language][k];
 const fields = ['confirmed','deliverables','assumptions','out_of_scope','questions','risks','proposal'];
-function updateButton() { $('#analyze').disabled = !enabled || loading || !token || !$('#consent').checked || $('#brief').value.trim().length < 20; }
+function currentAnswers() {
+ return [...document.querySelectorAll('[data-answer-question]')].filter(el => el.value.trim()).map(el => ({ question:el.dataset.answerQuestion, answer:el.value.trim() }));
+}
+function updateButton() {
+ const canCall = enabled && !loading && token && $('#consent').checked;
+ $('#analyze').disabled = !canCall || $('#brief').value.trim().length < 20;
+ const hasDraft = Boolean(metadata) && !$('#result').hidden && sourceBrief === $('#brief').value;
+ $('#refine').disabled = !canCall || !hasDraft || currentAnswers().length === 0;
+ $('#review').disabled = !canCall || !hasDraft;
+}
+function invalidateReview() { lastReview = null; $('#review-report').hidden = true; }
+function invalidateDraft() {
+ if (metadata && sourceBrief !== $('#brief').value) { metadata = null; answerHistory = []; invalidateReview(); $('#result').hidden = true; $('#empty').hidden = false; }
+}
 function status(text, error = false) { $('#status').textContent = text; $('#status').classList.toggle('error', error); }
 function translate() {
  document.documentElement.lang = language;
  for (const el of document.querySelectorAll('[data-t]')) el.textContent = t(el.dataset.t);
  $('#brief').placeholder = t('placeholder');
  $('#availability').textContent = t(enabled ? 'ready' : 'off');
- if ($('#example').value) $('#brief').value = examples[language][$('#example').value];
+ if ($('#example').value && !metadata) $('#brief').value = examples[language][$('#example').value];
  updateCount();
  for (const label of document.querySelectorAll('[data-field-label]')) label.textContent = t(label.dataset.fieldLabel);
  status('');
 }
 function updateCount() { $('#character-count').textContent = `${$('#brief').value.length.toLocaleString(language)} / 8,000`; updateButton(); }
 $('#language').addEventListener('change', () => { language = $('#language').value; translate(); });
-$('#example').addEventListener('change', () => { if ($('#example').value) $('#brief').value = examples[language][$('#example').value]; updateCount(); });
-$('#brief').addEventListener('input', () => { $('#example').value = ''; updateCount(); });
+$('#example').addEventListener('change', () => { if ($('#example').value) $('#brief').value = examples[language][$('#example').value]; invalidateDraft(); updateCount(); });
+$('#brief').addEventListener('input', () => { $('#example').value = ''; invalidateDraft(); updateCount(); });
 $('#consent').addEventListener('change', updateButton);
 function render(data) {
  metadata = data.provenance; edited = false;
+ invalidateReview();
  $('#sections').replaceChildren();
  for (const key of fields) {
   const value = key in data.result.scope ? data.result.scope[key] : data.result[key];
   const section = document.createElement('div'); section.className = `output-field ${key}`;
   const label = document.createElement('label'); label.htmlFor = `output-${key}`; label.dataset.fieldLabel = key; label.textContent = t(key);
   const textarea = document.createElement('textarea'); textarea.id = label.htmlFor; textarea.value = Array.isArray(value) ? value.map(x => `- ${x}`).join('\n') : value;
-  textarea.placeholder = t('noItems'); textarea.addEventListener('input', () => { edited = true; });
+  textarea.placeholder = t('noItems'); textarea.addEventListener('input', () => { edited = true; if (lastReview) status(t('stale')); invalidateReview(); });
   section.append(label, textarea); $('#sections').append(section);
  }
  $('#provenance').textContent = `${t('generated')} · ${metadata.model} · ${new Date(metadata.generatedAt).toLocaleString(language)} · ID ${metadata.requestId}`;
  $('#empty').hidden = true; $('#result').hidden = false; $('#export-status').textContent = '';
+ $('#answers').replaceChildren();
+ if (answerHistory.length) {
+  const details = document.createElement('details'); const summary = document.createElement('summary'); summary.textContent = t('priorAnswers'); details.append(summary);
+  for (const pair of answerHistory) { const p=document.createElement('p'); p.textContent=`${pair.question}\n${pair.answer}`; details.append(p); }
+  $('#answers').append(details);
+ }
+ data.result.questions.forEach((question,i) => {
+  const label=document.createElement('label'); label.htmlFor=`answer-${i}`; label.textContent=question;
+  const answer=document.createElement('textarea'); answer.id=label.htmlFor; answer.rows=2; answer.maxLength=1000; answer.dataset.answerQuestion=question; answer.placeholder=t('answerPlaceholder'); answer.addEventListener('input',()=>{ if(lastReview) status(t('stale'));invalidateReview();updateButton(); });
+  $('#answers').append(label,answer);
+ });
+ updateButton();
+}
+function readDraft() {
+ const values = Object.fromEntries(fields.map(key => [key,$(`#output-${key}`).value]));
+ const list = value => value.split('\n').map(line => line.replace(/^\s*[-•]\s?/, '').trim()).filter(Boolean);
+ return { scope:Object.fromEntries(['confirmed','deliverables','assumptions','out_of_scope'].map(key=>[key,list(values[key])])), questions:list(values.questions), risks:list(values.risks), proposal:values.proposal };
+}
+function showReview(data) {
+ lastReview = data; const report=$('#review-report'); report.replaceChildren();
+ const summary=document.createElement('p'); summary.textContent=data.review.summary; report.append(summary);
+ if (!data.review.findings.length) { const p=document.createElement('p');p.textContent=t('noFindings');report.append(p); }
+ for (const finding of data.review.findings) {
+  const article=document.createElement('article');article.className='finding';
+  const heading=document.createElement('h4');heading.textContent=`${finding.severity.toUpperCase()} · ${finding.issue}`;
+  const evidence=document.createElement('p');evidence.textContent=`${t('evidence')}: ${finding.evidence}`;
+  const suggestion=document.createElement('p');suggestion.textContent=`${t('suggestion')}: ${finding.suggestion}`;
+  article.append(heading,evidence,suggestion);report.append(article);
+ }
+ if (data.review.open_questions.length) { const heading=document.createElement('h4');heading.textContent=t('openQuestions');report.append(heading);for(const question of data.review.open_questions){const p=document.createElement('p');p.textContent=question;report.append(p);} }
+ const provenance=document.createElement('p');provenance.className='small';provenance.textContent=`${data.provenance.model} · ${data.provenance.generatedAt} · ID ${data.provenance.requestId}`;report.append(provenance);report.hidden=false;
 }
 function markdown() {
- return `# ${t('exportTitle')}\n\n${t('generated')}: ${metadata.model}\n${metadata.generatedAt}\n${edited ? t('edited')+'\n' : ''}\n` + fields.map(key => `## ${t(key)}\n\n${$(`#output-${key}`).value || t('noItems')}\n`).join('\n');
+ const review = lastReview ? `\n## ${t('checkExport')}\n\n${lastReview.provenance.model} · ${lastReview.provenance.generatedAt}\n\n${lastReview.review.summary}\n\n${lastReview.review.findings.map(f=>`- ${f.severity}: ${f.issue}\n  ${t('evidence')}: ${f.evidence}\n  ${t('suggestion')}: ${f.suggestion}`).join('\n')}\n\n### ${t('openQuestions')}\n\n${lastReview.review.open_questions.map(q=>`- ${q}`).join('\n')}\n` : '';
+ return `# ${t('exportTitle')}\n\n${t('generated')}: ${metadata.model}\n${metadata.generatedAt}\n${edited ? t('edited')+'\n' : ''}\n` + fields.map(key => `## ${t(key)}\n\n${$(`#output-${key}`).value || t('noItems')}\n`).join('\n') + review;
 }
 $('#copy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(markdown()); $('#export-status').textContent = t('copied'); } catch { $('#export-status').textContent = t('copyFailed'); } });
 $('#download').addEventListener('click', () => {
  const url = URL.createObjectURL(new Blob([markdown()], { type:'text/markdown;charset=utf-8' }));
  const a = document.createElement('a'); a.href = url; a.download = 'seekapp-scope-proposal.md'; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); $('#export-status').textContent = t('downloaded');
 });
-$('#brief-form').addEventListener('submit', async event => {
- event.preventDefault();
+async function runAction(action) {
  if (loading || !enabled || !token || !$('#consent').checked || $('#brief').value.trim().length < 20) return status(t('required'), true);
+ const answers = [...answerHistory,...currentAnswers()];
+ if (action !== 'generate' && (sourceBrief !== $('#brief').value || !metadata)) return;
+ if (action !== 'generate' && (answers.length > 20 || answers.reduce((sum,a)=>sum+a.answer.length,0)>6000 || (action==='refine' && currentAnswers().length===0))) return status(t('answerRequired'),true);
+ const input = { action, brief:$('#brief').value, language, consent:true, turnstileToken:token };
+ if(action!=='generate') { input.answers=answers;input.draft=readDraft(); }
  loading = true; updateButton(); $('#language').disabled = true; $('#example').disabled = true; $('#brief').disabled = true; $('#consent').disabled = true;
- // Hide any previous draft so a failed new request cannot look like a success.
- $('#result').hidden = true; $('#empty').hidden = false; status(t('loading'));
+ for(const el of document.querySelectorAll('#sections textarea,#answers textarea')) el.disabled=true;
+ if(action==='generate') { metadata=null;answerHistory=[];invalidateReview();$('#result').hidden=true;$('#empty').hidden=false; }
+ if(action==='review') invalidateReview();
+ status(t(action==='refine'?'refining':action==='review'?'reviewing':'loading'));
  try {
-  const response = await fetch('/api/scope', { method:'POST', headers:{ 'Content-Type':'application/json' }, signal:AbortSignal.timeout(65000), body:JSON.stringify({ brief:$('#brief').value, language, consent:true, turnstileToken:token }) });
+  const response = await fetch('/api/scope', { method:'POST', headers:{ 'Content-Type':'application/json' }, signal:AbortSignal.timeout(65000), body:JSON.stringify(input) });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error);
-  render(data); status(t('received'));
+  if(action==='review') { showReview(data);status(t('reviewed')); }
+  else { sourceBrief=input.brief;if(action==='refine')answerHistory=answers;render(data);status(t(action==='refine'?'updated':'received')); }
  } catch (error) { status(t('errors')[error.message] || (['TimeoutError','AbortError'].includes(error.name) ? t('errors').timeout : t('errors').default), true); }
- finally { loading = false; token = ''; if (window.turnstile && widgetId !== undefined) window.turnstile.reset(widgetId); $('#language').disabled = false; $('#example').disabled = false; $('#brief').disabled = false; $('#consent').disabled = false; updateButton(); }
-});
+ finally { loading = false; token = ''; if (window.turnstile && widgetId !== undefined) window.turnstile.reset(widgetId); $('#language').disabled = false; $('#example').disabled = false; $('#brief').disabled = false; $('#consent').disabled = false;for(const el of document.querySelectorAll('#sections textarea,#answers textarea')) el.disabled=false;updateButton(); }
+}
+$('#brief-form').addEventListener('submit',event=>{event.preventDefault();runAction('generate');});
+$('#refine').addEventListener('click',()=>runAction('refine'));
+$('#review').addEventListener('click',()=>runAction('review'));
 async function setup() {
  translate();
  try {

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createWorker } from '../src/worker.mjs';
 import { DemoBudget } from '../src/budget.mjs';
-import { result } from './fixtures.mjs';
+import { result, review } from './fixtures.mjs';
 
 function harness(options = {}) {
   const calls = []; let admission = options.admission || { ok: true };
@@ -31,6 +31,33 @@ test('Vietnamese output selection reaches Claude as data',async () => {
   const h=harness(); await h.worker.fetch(h.req({...h.input,language:'vi'}),h.env);
   assert.equal(JSON.parse(h.calls.find(c=>c.url?.includes('anthropic')).body.messages[0].content).output_language,'Vietnamese');
   assert.equal(h.calls.find(c=>c.url?.includes('anthropic')).body.max_tokens,3600);
+});
+test('refinement includes source brief, answers and user-edited draft, using existing admission',async()=>{
+ const h=harness();const draft=structuredClone(result);draft.proposal='Client requests no payment integration.';
+ const answers=[{question:'Are deposits required?',answer:'No, no online payments.'}];
+ const response=await h.worker.fetch(h.req({...h.input,action:'refine',draft,answers}),h.env);
+ assert.equal(response.status,200);assert.equal((await response.json()).action,'refine');
+ const api=h.calls.find(c=>c.url?.includes('anthropic')).body;const content=JSON.parse(api.messages[0].content);
+ assert.deepEqual(content.clarification_answers,answers);assert.deepEqual(content.current_draft,draft);assert.equal(content.client_brief,h.input.brief);
+ assert.match(api.system,/never assume an unanswered question is resolved/);assert.equal(h.calls.filter(c=>c.budget?.action==='reserve').length,1);
+});
+test('review returns findings, not a replacement draft or an approval',async()=>{
+ const h=harness({text:JSON.stringify(review)});const draft=structuredClone(result);draft.proposal='We guarantee delivery tomorrow.';
+ const response=await h.worker.fetch(h.req({...h.input,action:'review',draft,answers:[]}),h.env);const data=await response.json();
+ assert.equal(response.status,200);assert.deepEqual(data.review,review);assert.equal(data.result,undefined);
+ const api=h.calls.find(c=>c.url?.includes('anthropic')).body;assert.deepEqual(api.output_config.format.schema.required,['summary','findings','open_questions']);assert.equal(JSON.parse(api.messages[0].content).current_draft.proposal,draft.proposal);
+});
+test('follow-up rejects missing draft, empty refinement, oversized or malformed answers before providers',async()=>{
+ const h=harness();
+ for(const item of [{action:'other'},{action:'refine',draft:result,answers:[]},{action:'review',answers:[]},{action:'refine',draft:result,answers:[{question:'Payment?',answer:'x'.repeat(1001)}]},{action:'review',draft:result,answers:[null]},{action:'review',draft:result,answers:Array(21).fill({question:'Question?',answer:'Answer'})}]) {
+  assert.equal((await h.worker.fetch(h.req({...h.input,...item}),h.env)).status,400);
+ }
+ assert.equal(h.calls.length,0);
+});
+test('review enforces verification, quotas and its own output validation',async()=>{
+ const input=h=>({...h.input,action:'review',draft:result,answers:[]});
+ const denied=harness({admission:{ok:false,reason:'daily'}});assert.equal((await denied.worker.fetch(denied.req(input(denied)),denied.env)).status,429);assert.ok(!denied.calls.some(c=>c.url?.includes('anthropic')));
+ const invalid=harness({text:JSON.stringify({...review,findings:[{...review.findings[0],category:'approved'}]})});const response=await invalid.worker.fetch(invalid.req(input(invalid)),invalid.env);assert.equal(response.status,502);assert.equal((await response.json()).error,'invalid-output');assert.equal(invalid.calls.at(-1).budget.action,'release');
 });
 test('reject foreign origin and unsupported methods before any provider call',async () => {
   const h=harness();assert.equal((await h.worker.fetch(h.req(h.input,{Origin:'https://evil.example'}),h.env)).status,403);

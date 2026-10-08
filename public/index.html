@@ -39,6 +39,18 @@
           <p id="provenance" class="provenance"></p>
           <p class="review-note" data-t="reviewNote">Editable draft. Confirm scope, prices and dates with your client before sharing.</p>
           <div id="sections"></div>
+          <section id="clarifications" class="follow-up" aria-labelledby="clarify-title">
+            <h3 id="clarify-title" data-t="clarifyTitle">Answer the open questions</h3>
+            <p class="small" data-t="clarifyHelp">Answer what you know. Leave unknown items empty; they remain unresolved. Each update or review uses one analysis allowance.</p>
+            <div id="answers"></div>
+            <button id="refine" type="button" disabled data-t="refine">Update scope and proposal</button>
+          </section>
+          <section class="follow-up" aria-labelledby="check-title">
+            <h3 id="check-title" data-t="checkTitle">Check the current draft</h3>
+            <p class="small" data-t="checkHelp">Claude compares your edited draft against the brief and answers. Review suggestions yourself; this is not approval.</p>
+            <button id="review" type="button" class="secondary" disabled data-t="review">Check with Claude</button>
+            <div id="review-report" hidden aria-live="polite"></div>
+          </section>
           <div class="actions"><button type="button" id="copy" class="secondary" data-t="copy">Copy Markdown</button><button type="button" id="download" class="secondary" data-t="download">Download .md</button></div>
           <p id="export-status" class="small" role="status"></p>
         </div>

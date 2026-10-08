@@ -5,8 +5,8 @@ Date: 8 October 2026. Environment: Windows, PowerShell Core 7.6.6, Node.js 22.14
 | Check | Result | What this establishes |
 |---|---|---|
 | `npm run check` | Pass | Backend and browser JavaScript parse |
-| `npm test` | 10 tests pass | Mocked provider pipeline, English/Vietnamese request selection, origin/method/body validation, consent, server-side verification checks, error handling, concurrency and budget admission |
-| `npm run test:browser` | 6 tests pass | Real local Worker serving assets; desktop/mobile Chrome interaction, language switch, generated fields with mocked provider data, editing, Markdown download, errors, no horizontal overflow |
+| `npm test` | 14 tests pass | Mocked provider pipeline, English/Vietnamese request selection, origin/method/body validation, consent, server-side verification checks, error handling, concurrency and budget admission |
+| `npm run test:browser` | 8 tests pass | Real local Worker serving assets; desktop/mobile Chrome interaction, language switch, generated fields with mocked provider data, editing, Markdown download, errors, no horizontal overflow |
 | Local runtime test | 1 test passes | Real SQLite Durable Object admits two simultaneous reservations and enforces the global daily cap after releases |
 | `npm run build` | Dry run passes | Deployable Worker bundle, static assets and Durable Object bindings |
 
@@ -29,3 +29,14 @@ Four real Anthropic Messages requests were made: two English cases succeeded, th
 The successful calls used 3,139 input tokens and 6,478 output tokens combined. The failed initial Vietnamese call also may incur fees; its token usage was not captured, so these totals are **not** the entire paid run. No dollar cost is inferred here.
 
 The live check used the production Worker handler and real Claude transport. Siteverify alone was replaced with a test response; budget storage was in memory in this script. Public Turnstile, deployment and browser-to-live-provider operation are not established by this result. See [validation/LIVE-EVALUATION.md](validation/LIVE-EVALUATION.md) and the JSON receipts for actual outputs and timestamps. Syntax and ten backend tests passed again after the token-limit change.
+
+
+## Clarification/update and review workflow — 9 October 2026 Vietnam
+
+Implemented explicit generate/refine/review actions, using the same consent, origin validation, Turnstile verification, request limits and durable budget. Browser answer history is retained across updates, editable draft text is included in refinement/review, and changing a draft or answer hides its outdated review. Changing the brief clears the previous workflow.
+
+Four additional backend tests cover follow-up context, typed review results, invalid/oversized answers, shared admission and invalid report output. Two additional browser cases (desktop/mobile) exercise the three-step workflow, user edits, answer history and stale-review invalidation. Latest totals: 14 backend tests and 8 browser tests pass; dry-run bundle succeeds.
+
+Three newly authorized real Claude calls were made with the previously approved key: one refinement, one review, and a second review after tightening the prompt to reduce unsupported findings. All three returned demo HTTP 200. This uses the same local-only Siteverify substitution/in-memory budget as earlier paid checks; public Turnstile and deployment remain untested. The fixture draft deliberately contains a false deadline/price promise. The review identifies it, but some lower-severity findings remain debatable, so the UI does not present the report as approval or certification.
+
+Receipts: validation/live-workflow-results.json and validation/live-workflow-review-retry.json. All briefs and answers are fictional. Key excluded from tracked files; no production deployment or push performed.

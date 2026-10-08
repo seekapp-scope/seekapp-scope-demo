@@ -1,6 +1,6 @@
 # SeekApp Scope live demo
 
-A small Claude application for freelancers and web agencies: a client brief becomes a project scope, clarification questions, risks and an editable proposal. English and Vietnamese output; copy/download Markdown; no automatic delivery to clients.
+A small Claude application for freelancers and web agencies: brief → scope/questions/proposal → clarification answers → updated draft → review with evidence and suggestions. English and Vietnamese output; copy/download Markdown; no automatic delivery to clients.
 
 **Current state:** implementation and local tests are available. Three synthetic briefs have passed the production handler using the real Claude Sonnet 5.5 API; see [the live evaluation](validation/LIVE-EVALUATION.md). Public deployment and real Turnstile verification remain pending. Live API calls are disabled by default. There are no prepared output fallbacks in the production code.
 
@@ -37,7 +37,15 @@ npm run build
 4. The Worker calls `https://api.anthropic.com/v1/messages`, using `claude-sonnet-5-5` by default and JSON-schema structured output. The model is configurable; the account must have access to it.
 5. A complete validated response becomes editable fields. Truncated, refused, malformed or failed responses become errors, never canned results. The response records the returned model, generation time and a demo request ID. This ID is for troubleshooting; it is not an independent proof of authenticity.
 
-The prompt separates facts from assumptions, highlights contradictions and avoids inventing prices, schedules or promises. This is a single Claude call, without browsing, tools, MCP, repository ingestion or external actions. Model outputs still need human review.
+The prompt separates facts from assumptions, highlights contradictions and avoids inventing prices, schedules or promises. Each explicit action makes one Claude call, without browsing, tools, MCP, repository ingestion or external actions. Model outputs still need human review.
+
+### Clarification and review
+
+- Answer any of the generated questions, then select **Update scope and proposal**. The Worker sends the original brief, current edited draft and submitted answer history. Empty answers remain unresolved; previous answers are retained in the page across updates.
+- Select **Check with Claude** to compare the current draft against the brief and answers. The report identifies missing requirements, unconfirmed assumptions, unsupported commitments and contradictions, with evidence and suggested changes. It does not automatically edit or approve the draft.
+- Editing a draft or answer hides its previous review. Changing the brief clears the previous workflow. All state is page-local and disappears on reload.
+- Answers: at most 20 across updates, 1,000 characters each, 6,000 answer characters combined. Draft context: at most 20,000 serialized characters. The entire request is still capped at 40,000 bytes. Large briefs/drafts may need shortening.
+- Generate, update and check each require fresh Turnstile verification and consume one of the shared rate/budget allowances. A three-step workflow uses three calls; no step starts automatically.
 
 ## Limits and secrets
 
@@ -97,3 +105,5 @@ node scripts/live-check.mjs --allow-paid --key-file /path/to/api.txt
 ```
 
 The script exercises the production request handler with real Claude responses, while replacing only Siteverify with a local test response and using an in-memory instance of the budget class. That substitution exists only in the explicitly invoked script, not in the public API. The separate runtime test validates real SQLite budget storage. Receipts contain only fictional briefs, outputs and provider metadata, not credentials.
+
+Use `--workflow` to run two checks using the recorded successful booking brief: a clarification update and a review of a deliberately unsupported delivery/price promise. It writes a separate receipt rather than overwriting the original three-brief evaluation.
