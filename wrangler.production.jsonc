@@ -49,5 +49,8 @@
       "pattern": "seekapp.net/api/scope*",
       "zone_id": "4b23068717b61c2a36e2411a90072929"
     }
-  ]
+  ],
+  "placement": {
+    "region": "aws:us-east-1"
+  }
 }

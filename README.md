@@ -1,10 +1,14 @@
 # SeekApp Scope live demo
 
-A small Claude application for freelancers and web agencies: brief → scope/questions/proposal → clarification answers → updated draft → review with evidence and suggestions. English and Vietnamese output; copy/download Markdown; no automatic delivery to clients.
+A small Claude application for freelancers and web agencies serving US clients: brief → scope/questions/proposal → clarification answers → updated draft → review with evidence and suggestions. English and Vietnamese output; copy/download Markdown; no automatic delivery to clients.
 
 **Current state:** source is published on [GitHub](https://github.com/seekapp-scope/seekapp-scope-demo). Three synthetic briefs, a clarification update and proposal reviews have passed the production handler using the real Claude Sonnet 5.5 API; see [the live evaluation](validation/LIVE-EVALUATION.md). The public demo is deployed at [seekapp.net/demo](https://seekapp.net/demo), with real Turnstile and live mode enabled in the separate production configuration. HTTP/config/security-guard checks passed. The actual Chrome → Worker → Turnstile → Claude workflow passed generation, clarification update and review; see [the public workflow receipt](validation/public-workflow-results.json). Local development remains disabled by default. There are no prepared output fallbacks in the production code.
 
 Founder: Truong Can Em, Vietnam · contact@seekapp.net · [SeekApp](https://seekapp.net).
+
+## Processing placement
+
+The demo API uses `placement.region = "aws:us-east-1"`, a Cloudflare placement hint near US East, not a US-only data residency guarantee. Static assets remain on the global CDN. The existing rate-limit Durable Object and its counters are preserved; its location is not changed by Worker placement. Anthropic processing locations are governed separately. The config endpoint exposes `X-Worker-Placement` for deployment verification; `CF-Ray` identifies the ingress edge rather than the API compute location.
 
 ## Run locally
 
