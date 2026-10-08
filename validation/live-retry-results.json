@@ -1,0 +1,101 @@
+{
+  "testedAt": "2026-10-08T17:02:32.613Z",
+  "requestedModel": "claude-sonnet-5-5",
+  "actualModel": "claude-sonnet-5-5",
+  "maxPaidRequests": 3,
+  "provider": "Anthropic live API",
+  "scope": "Production Worker handler and real Claude; Siteverify transport mocked only in this local script, budget class uses in-memory storage. Public Turnstile and deployment not tested.",
+  "cases": [
+    {
+      "id": "conflicting-shop-vi",
+      "language": "vi",
+      "brief": "Làm cửa hàng online có giỏ hàng, thanh toán, tài khoản khách và lịch sử mua hàng. Không muốn lưu dữ liệu khách hàng ở bất cứ đâu. Toàn bộ website phải ra mắt ngày mai nhưng danh sách sản phẩm, giá, ảnh và nội dung đến tuần sau mới có. Chưa chọn cổng thanh toán và chưa thống nhất ngân sách.",
+      "providerStatus": 200,
+      "providerRequestId": "req_011Cfq8X7YrR8fL3LjCADNQn",
+      "providerStopReason": "end_turn",
+      "providerUsage": {
+        "input_tokens": 1095,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 3190,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global"
+      },
+      "demoStatus": 200,
+      "elapsedMs": 20837,
+      "output": {
+        "scope": {
+          "confirmed": [
+            "Khách muốn xây dựng cửa hàng online có giỏ hàng.",
+            "Khách muốn có chức năng thanh toán.",
+            "Khách muốn có tài khoản khách hàng.",
+            "Khách muốn có lịch sử mua hàng.",
+            "Khách không muốn lưu dữ liệu khách hàng ở bất cứ đâu.",
+            "Khách mong muốn toàn bộ website ra mắt vào ngày mai (đây là kỳ vọng của khách, chưa phải cam kết của chúng tôi).",
+            "Danh sách sản phẩm, giá, ảnh và nội dung chỉ có vào tuần sau.",
+            "Chưa chọn cổng thanh toán và chưa thống nhất ngân sách."
+          ],
+          "deliverables": [
+            "Đề xuất: website thương mại điện tử gồm trang sản phẩm, giỏ hàng và quy trình thanh toán (tùy thuộc cổng thanh toán được chọn).",
+            "Đề xuất: hệ thống tài khoản khách hàng và trang lịch sử mua hàng (tùy thuộc câu trả lời về lưu trữ dữ liệu).",
+            "Đề xuất: khu vực quản trị để nhập sản phẩm, giá, ảnh và nội dung khi khách cung cấp.",
+            "Đề xuất: bản ra mắt theo giai đoạn (ví dụ trang giới thiệu/tạm thời trước, cửa hàng đầy đủ sau khi có nội dung) nếu khách đồng ý.",
+            "Đề xuất: tài liệu hướng dẫn quản trị cơ bản và kế hoạch kiểm thử trước khi ra mắt."
+          ],
+          "assumptions": [
+            "Cần khách phê duyệt: 'không lưu dữ liệu khách hàng' được hiểu là không tự lưu dữ liệu nhạy cảm như thẻ thanh toán trên máy chủ riêng, còn dữ liệu tài khoản/đơn hàng vẫn phải lưu ở đâu đó (hệ thống của nền tảng hoặc cổng thanh toán).",
+            "Cần khách phê duyệt: ngày 'ngày mai' không khả thi cho cửa hàng đầy đủ khi chưa có sản phẩm, giá, ảnh và nội dung; cần lịch ra mắt mới.",
+            "Cần khách phê duyệt: cổng thanh toán sẽ do khách chọn và tự tạo tài khoản merchant.",
+            "Cần khách phê duyệt: tên miền, hosting và các chi phí bên thứ ba do khách chịu trách nhiệm, trừ khi thỏa thuận khác.",
+            "Giả định: website dùng một ngôn ngữ và một loại tiền tệ cho đến khi khách xác nhận khác."
+          ],
+          "out_of_scope": [
+            "Chụp ảnh sản phẩm, viết nội dung và nhập liệu số lượng lớn nếu khách không cung cấp (chưa xác nhận).",
+            "Xử lý logistics, vận chuyển và tích hợp đơn vị vận chuyển (chưa được yêu cầu).",
+            "Tự lưu trữ hoặc xử lý trực tiếp dữ liệu thẻ thanh toán.",
+            "Marketing, SEO nâng cao và quảng cáo.",
+            "Bảo trì sau ra mắt (chưa thỏa thuận)."
+          ]
+        },
+        "questions": [
+          "Ngày ra mắt 'ngày mai' có bắt buộc không? Nếu nội dung đến tuần sau mới có, khách có chấp nhận lùi ngày hoặc ra mắt theo giai đoạn không?",
+          "Yêu cầu 'không lưu dữ liệu khách hàng ở bất cứ đâu' mâu thuẫn với tài khoản khách và lịch sử mua hàng. Khách muốn chính xác điều gì: không lưu dữ liệu cá nhân, không lưu thông tin thanh toán, hay cho phép lưu ở dịch vụ bên thứ ba?",
+          "Nếu không lưu dữ liệu, khách có chấp nhận bỏ tài khoản và lịch sử mua hàng, hoặc để cổng thanh toán/nền tảng bên thứ ba lưu trữ không?",
+          "Khách dự định dùng cổng thanh toán nào (ví dụ ngân hàng, ví điện tử, thẻ quốc tế)? Khách đã có tài khoản merchant chưa và cần phương thức thanh toán nào (thẻ, chuyển khoản, COD)?",
+          "Ngân sách dự kiến là bao nhiêu và ai chịu chi phí tên miền, hosting, phí cổng thanh toán và các dịch vụ bên thứ ba?",
+          "Dự kiến có bao nhiêu sản phẩm, danh mục và biến thể? Ai chịu trách nhiệm nhập liệu?",
+          "Khách đã có logo, bộ nhận diện thương hiệu, tên miền, hosting và chính sách (đổi trả, bảo mật, điều khoản) chưa?",
+          "Cần hỗ trợ vận chuyển, tính phí ship, thuế/hóa đơn hoặc ngôn ngữ/tiền tệ nào khác không?",
+          "Ai là người duyệt và xác nhận nghiệm thu, và hạn chót cung cấp nội dung vào tuần sau là ngày cụ thể nào?"
+        ],
+        "proposal": "Cảm ơn anh/chị đã gửi yêu cầu. Chúng tôi hiểu anh/chị cần một cửa hàng online gồm giỏ hàng, thanh toán, tài khoản khách và lịch sử mua hàng, với mong muốn ra mắt vào ngày mai.\n\nTrước khi báo lịch và chi phí, có một số điểm cần thống nhất:\n\n1) Thời gian: Danh sách sản phẩm, giá, ảnh và nội dung chỉ có vào tuần sau, nên chưa thể xác nhận ra mắt đầy đủ vào ngày mai. Chúng tôi đề xuất hai hướng, tùy anh/chị chọn: (a) ra mắt trước một trang tạm thời/giới thiệu, sau đó mở cửa hàng đầy đủ khi có nội dung; hoặc (b) dời ngày ra mắt đến sau khi nhận đủ nội dung. Ngày cụ thể sẽ được xác định sau khi thống nhất.\n\n2) Dữ liệu khách hàng: Tài khoản và lịch sử mua hàng đòi hỏi phải lưu một số dữ liệu. Nếu anh/chị không muốn lưu dữ liệu, các tính năng này có thể phải điều chỉnh hoặc bỏ. Chúng tôi cần làm rõ yêu cầu này, ví dụ có thể giao việc lưu trữ cho nền tảng hoặc cổng thanh toán đáng tin cậy và không tự lưu dữ liệu thẻ. Phạm vi này còn phụ thuộc vào quyết định của anh/chị.\n\n3) Thanh toán: Việc tích hợp phụ thuộc vào cổng thanh toán được chọn và việc anh/chị có tài khoản merchant. Chúng tôi sẽ đánh giá sau khi anh/chị xác nhận.\n\n4) Chi phí: Chúng tôi chưa đưa ra mức giá vì ngân sách và phạm vi chưa thống nhất. Báo giá sẽ được gửi sau khi trả lời các câu hỏi làm rõ.\n\nĐề xuất các bước tiếp theo: xác nhận các câu hỏi bên dưới, chốt cổng thanh toán và cách xử lý dữ liệu, thống nhất ngày cung cấp nội dung, sau đó chúng tôi gửi phạm vi chi tiết, lịch trình và báo giá để anh/chị duyệt.",
+        "risks": [
+          "Ngày ra mắt 'ngày mai' xung đột với việc nội dung sản phẩm, giá và ảnh chỉ có vào tuần sau; ra mắt đầy đủ đúng hạn là không thực tế.",
+          "Yêu cầu không lưu dữ liệu khách hàng mâu thuẫn với tài khoản khách và lịch sử mua hàng.",
+          "Chưa chọn cổng thanh toán có thể làm thay đổi phạm vi, thời gian và chi phí; việc đăng ký merchant có thể cần thời gian xét duyệt.",
+          "Chưa thống nhất ngân sách nên có nguy cơ bất đồng về phạm vi và chi phí.",
+          "Rủi ro tuân thủ pháp lý về bảo mật dữ liệu cá nhân, thanh toán và chính sách bán hàng nếu chưa làm rõ cách xử lý dữ liệu.",
+          "Thiếu tài sản (ảnh, nội dung, logo, chính sách) có thể làm chậm kiểm thử và ra mắt.",
+          "Việc ra mắt vội với dữ liệu thanh toán chưa được kiểm thử kỹ có thể gây lỗi đơn hàng hoặc mất niềm tin khách hàng."
+        ]
+      },
+      "provenance": {
+        "provider": "Anthropic",
+        "model": "claude-sonnet-5-5",
+        "requestId": "004b2c67-ab37-4118-a74e-164e32b9397f",
+        "generatedAt": "2026-10-08T17:02:53.451Z"
+      },
+      "usage": {
+        "inputTokens": 1095,
+        "outputTokens": 3190
+      }
+    }
+  ]
+}

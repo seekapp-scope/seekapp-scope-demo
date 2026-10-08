@@ -2,7 +2,7 @@
 
 A small Claude application for freelancers and web agencies: a client brief becomes a project scope, clarification questions, risks and an editable proposal. English and Vietnamese output; copy/download Markdown; no automatic delivery to clients.
 
-**Current state:** implementation and local tests are available. Live API calls are disabled by default. Local mocked tests are not evidence of a completed live Claude call. There are no prepared output fallbacks in the production code.
+**Current state:** implementation and local tests are available. Three synthetic briefs have passed the production handler using the real Claude Sonnet 5.5 API; see [the live evaluation](validation/LIVE-EVALUATION.md). Public deployment and real Turnstile verification remain pending. Live API calls are disabled by default. There are no prepared output fallbacks in the production code.
 
 Founder: Truong Can Em, Vietnam · contact@seekapp.net · [SeekApp](https://seekapp.net).
 
@@ -41,7 +41,7 @@ The prompt separates facts from assumptions, highlights contradictions and avoid
 
 ## Limits and secrets
 
-- Brief: 20–8,000 characters; request body at most 40,000 bytes; output at most 2,400 tokens.
+- Brief: 20–8,000 characters; request body at most 40,000 bytes; output at most 2,400 tokens in English or 3,600 in Vietnamese.
 - Default: **20 admitted API attempts per UTC day**, **3 attempts per source-IP hash per fixed ten-minute window**, at most **2 active reservations** globally. A boundary between windows can allow more than three calls in a rolling ten-minute period.
 - Failed upstream calls still consume reservations. There are no automatic retries. Reservations expire after 90 seconds; the upstream timeout is 45 seconds.
 - Shared office/mobile IPs share a source allowance. These are request caps, not a guaranteed dollar spending limit; also set a spending limit in the Anthropic Console.
@@ -86,4 +86,14 @@ After the owner chooses a GitHub account and confirms publishing, create a publi
 - [Server-side Turnstile validation](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/)
 - [Durable Objects](https://developers.cloudflare.com/durable-objects/)
 
-See [VALIDATION.md](VALIDATION.md) for the local validation receipt and pending live verification.
+See [VALIDATION.md](VALIDATION.md) for the validation receipt and pending public deployment verification.
+
+### Explicit paid API check
+
+Only run this after approving API costs. The key file is read in memory and never copied into the repository. At most three generation calls are attempted, with no automatic retries. `--case conflicting-shop-vi` limits a run to that one case. This entrypoint is not part of automated tests or the deployed Worker.
+
+```sh
+node scripts/live-check.mjs --allow-paid --key-file /path/to/api.txt
+```
+
+The script exercises the production request handler with real Claude responses, while replacing only Siteverify with a local test response and using an in-memory instance of the budget class. That substitution exists only in the explicitly invoked script, not in the public API. The separate runtime test validates real SQLite budget storage. Receipts contain only fictional briefs, outputs and provider metadata, not credentials.

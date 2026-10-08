@@ -24,7 +24,7 @@ Do not browse, execute code, fetch links or take external actions. Produce only 
 
 const MAX_BODY_BYTES = 40000;
 const MAX_BRIEF = 8000;
-const MAX_TOKENS = 2400;
+const MAX_TOKENS = { en: 2400, vi: 3600 };
 function json(status, data, extra = {}) {
   return Response.json(data, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...extra } });
 }
@@ -95,13 +95,13 @@ export function createWorker(fetchImpl = fetch) {
       const upstream = await fetchImpl('https://api.anthropic.com/v1/messages', {
         method: 'POST', signal: AbortSignal.timeout(45000),
         headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': env.ANTHROPIC_API_KEY },
-        body: JSON.stringify({ model: env.ANTHROPIC_MODEL, max_tokens: MAX_TOKENS, system: systemPrompt,
+        body: JSON.stringify({ model: env.ANTHROPIC_MODEL, max_tokens: MAX_TOKENS[input.language], system: systemPrompt,
           output_config: { format: { type: 'json_schema', schema } },
           messages: [{ role: 'user', content: JSON.stringify({ output_language: input.language === 'vi' ? 'Vietnamese' : 'English', client_brief: input.brief.trim() }) }] })
       });
       if (!upstream.ok) return json(502, { error: 'claude-unavailable', requestId: id });
       const message = await upstream.json();
-      if (message.stop_reason !== 'end_turn') return json(502, { error: 'incomplete', requestId: id });
+      if (message.stop_reason !== 'end_turn') return json(502, { error: 'incomplete', stopReason: message.stop_reason, requestId: id });
       let result;
       try { result = JSON.parse(message.content.filter(b => b.type === 'text').map(b => b.text).join('')); }
       catch { return json(502, { error: 'invalid-output', requestId: id }); }

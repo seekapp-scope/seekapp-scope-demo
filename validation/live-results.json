@@ -1,0 +1,175 @@
+{
+  "testedAt": "2026-10-08T17:01:01.145Z",
+  "requestedModel": "claude-sonnet-5-5",
+  "actualModel": "claude-sonnet-5-5",
+  "maxPaidRequests": 3,
+  "provider": "Anthropic live API",
+  "scope": "Production Worker handler and real Claude; Siteverify transport mocked only in this local script, budget class uses in-memory storage. Public Turnstile and deployment not tested.",
+  "cases": [
+    {
+      "id": "clear-agency",
+      "language": "en",
+      "brief": "Our small design agency needs a five-page website: Home, Services, Work, About and Contact. We will provide approved copy, brand assets and six case studies. The site should work on mobile, allow our team to edit case studies, and send contact enquiries to our company email. We do not need online payments, customer accounts or a blog. We have not agreed a budget or delivery date.",
+      "providerStatus": 200,
+      "providerRequestId": "req_011Cfq8QNcHUTzsNmxfFvLVo",
+      "demoStatus": 200,
+      "elapsedMs": 18653,
+      "output": {
+        "scope": {
+          "confirmed": [
+            "Five-page website: Home, Services, Work, About and Contact",
+            "Client will provide approved copy, brand assets and six case studies",
+            "Site must work on mobile devices",
+            "Client team must be able to edit case studies",
+            "Contact enquiries must be sent to the company email",
+            "No online payments, customer accounts or blog are required",
+            "Budget and delivery date have not been agreed"
+          ],
+          "deliverables": [
+            "Proposed: design and build of the five pages, responsive across common mobile, tablet and desktop sizes",
+            "Proposed: Work page with six case studies supplied by the client, each editable by the client team",
+            "Proposed: contact form that emails enquiries to the company email address, with basic spam protection",
+            "Proposed: simple editing method for case studies (e.g. CMS or editable content area), to be confirmed",
+            "Proposed: basic handover guidance on editing case studies",
+            "Proposed: pre-launch testing on agreed browsers and devices"
+          ],
+          "assumptions": [
+            "Needs approval: all copy will be final and approved before build starts, so no copywriting is included",
+            "Needs approval: brand assets include logo, fonts, colours and usable image files, with rights to use them",
+            "Needs approval: case study content (text, images, any video) will be supplied in usable formats",
+            "Needs approval: case studies can be edited by adding, changing or removing entries; the exact editing scope is not yet defined",
+            "Needs approval: the client has or will arrange domain and hosting, or the agency is to advise on options",
+            "Needs approval: one company email address will receive enquiries",
+            "Needs approval: design direction is to follow existing brand guidelines, with a set number of revision rounds to be agreed"
+          ],
+          "out_of_scope": [
+            "Online payments or e-commerce",
+            "Customer accounts or logins for site visitors",
+            "Blog or news section",
+            "Copywriting, photography, video production or logo and brand design unless separately agreed",
+            "Ongoing maintenance, SEO campaigns and marketing unless separately agreed",
+            "Additional pages or features beyond the five listed"
+          ]
+        },
+        "questions": [
+          "What budget range, if any, should we work within, and what is the preferred pricing approach (fixed or estimate)?",
+          "Is there a target launch date or a driver such as an event or campaign? If so, what is it?",
+          "When will the approved copy, brand assets and all six case studies be available, and in what formats?",
+          "What should case study editing allow: text and images only, adding new case studies, reordering, and how many editors are there?",
+          "Is there a preferred platform or CMS, or an existing site to migrate or replace?",
+          "Do you already have a domain and hosting, and who will manage them?",
+          "Which email address should receive enquiries, and what fields should the contact form include?",
+          "Are there design references, brand guidelines or sites you like or dislike?",
+          "Who is the single decision-maker for approvals, and how many revision rounds are expected?",
+          "Do you need analytics, cookie consent, privacy policy or accessibility standards (e.g. WCAG AA) on the site?"
+        ],
+        "proposal": "Thank you for your brief. Based on what you have shared, we propose a five-page responsive website (Home, Services, Work, About and Contact) for your design agency. Your team would supply approved copy, brand assets and six case studies, and the site would be built so these can be presented clearly on mobile and desktop.\n\nWhat we understand to be confirmed: the five pages, mobile support, the ability for your team to edit case studies, and a contact form that sends enquiries to your company email. You do not need online payments, customer accounts or a blog.\n\nProposed approach, subject to your confirmation: we would design the pages around your brand assets, build the Work section so your team can edit case studies without developer help, set up the contact form with basic spam protection, test across common devices and browsers, and provide short guidance on editing case studies after launch.\n\nOpen decisions: the editing method and its exact scope, hosting and domain arrangements, the number of design revisions, and the format and timing of your content. The approach, timeline and cost depend on your answers to our questions.\n\nBudget and delivery date have not yet been agreed. Any timeline or price will be provided after we have confirmed the scope and the date your content will be ready. Nothing here is a fixed commitment until a written scope is approved by both sides.\n\nNext step: please review the assumptions and questions, and we can then prepare a detailed quote and schedule.",
+        "risks": [
+          "No agreed budget or delivery date, so expectations may diverge and scope may drift",
+          "Content dependency: delays in approved copy, brand assets or the six case studies could delay the launch",
+          "'Edit case studies' is vague and could grow into a full CMS requirement affecting effort and cost",
+          "Assets may arrive in low-quality formats or lack usage rights, requiring rework",
+          "Contact form emails may land in spam or be targeted by bots without proper email deliverability setup and spam protection",
+          "Unclear hosting, domain and ownership arrangements could block launch",
+          "Unlimited revisions or multiple approvers could extend the project",
+          "Accessibility, privacy and cookie compliance needs are not stated and may add work later"
+        ]
+      },
+      "provenance": {
+        "provider": "Anthropic",
+        "model": "claude-sonnet-5-5",
+        "requestId": "93adaaeb-8ee2-44d6-8bd5-9c6c48d4e77b",
+        "generatedAt": "2026-10-08T17:01:19.797Z"
+      },
+      "usage": {
+        "inputTokens": 1042,
+        "outputTokens": 1632
+      }
+    },
+    {
+      "id": "missing-booking",
+      "language": "en",
+      "brief": "We need a website for our local salon so customers can book appointments. It should look good on mobile. We have three staff members and different services. We want to launch soon. We have not decided whether bookings need payment, how cancellations work, or who will provide the content.",
+      "providerStatus": 200,
+      "providerRequestId": "req_011Cfq8RkCq3zwwZe3TVpN1R",
+      "demoStatus": 200,
+      "elapsedMs": 17712,
+      "output": {
+        "scope": {
+          "confirmed": [
+            "Client needs a website for a local salon",
+            "Customers must be able to book appointments through the site",
+            "The site must look good on mobile",
+            "The salon has three staff members",
+            "The salon offers different services",
+            "Client wants to launch soon (no specific date given)"
+          ],
+          "deliverables": [
+            "Proposed: mobile-first responsive website (e.g., home, services, staff, contact/location pages)",
+            "Proposed: online appointment booking flow covering services and the three staff members",
+            "Proposed: services list with durations, and staff profiles, once content is supplied",
+            "Proposed: basic testing on common mobile and desktop browsers before launch",
+            "Proposed: launch support, with timing to be agreed once scope is final"
+          ],
+          "assumptions": [
+            "The 'soon' launch has no fixed date; any date is an unconfirmed client expectation until agreed",
+            "Booking may use a third-party booking tool or a custom build; approach is undecided and needs approval",
+            "Whether online payment or deposits are required is undecided; for now the plan assumes bookings without payment",
+            "Cancellation and rescheduling rules are not defined; the booking flow will be finalized after the client sets a policy",
+            "Client will supply or approve content (service descriptions, prices, staff bios, photos, logo) unless otherwise agreed",
+            "Client has or will arrange a domain name and hosting, or this will be agreed separately",
+            "Each staff member has their own availability and set of services they perform"
+          ],
+          "out_of_scope": [
+            "Payment processing or deposits unless the client confirms them and the scope is revised",
+            "Copywriting, photography and branding unless separately agreed",
+            "Ongoing maintenance, marketing and SEO beyond basic setup unless agreed",
+            "Integration with existing salon software unless the client confirms it exists and requests it",
+            "Email/SMS reminder systems unless confirmed"
+          ]
+        },
+        "questions": [
+          "What does 'soon' mean? Is there a target launch date or an event driving the timeline?",
+          "Should customers pay or leave a deposit when booking? If yes, which payment provider and which payment methods?",
+          "What is the cancellation and rescheduling policy (notice period, fees, no-show handling), and should customers be able to cancel online?",
+          "Who will provide the content: service list with prices and durations, staff bios, photos, logo, and opening hours? By when?",
+          "Does the salon already use a booking system or calendar (e.g., Google Calendar, paper diary, other software) that must be connected or replaced?",
+          "Can customers choose a specific staff member, or just a service and time? Do all three staff offer all services?",
+          "Who will manage bookings day to day, and how should the salon be notified (email, SMS, dashboard)?",
+          "Do you already have a domain name, hosting and a brand identity, and is there a budget range for the project and any monthly tool fees?"
+        ],
+        "proposal": "Thank you for your brief. Based on what you've told us, you need a mobile-friendly website for your salon where customers can see your services and staff and book appointments online. This draft sets out how we could approach it. Items marked as conditional depend on decisions we still need from you.\n\nProposed approach: a clean, mobile-first website with the main pages most salons need (home, services, team, contact and location), plus an online booking flow where customers choose a service, a staff member (if you want that option) and an available time. We would test the site on common phones and desktop browsers before launch.\n\nDecisions we need from you before we can finalize scope, timing and cost:\n1. Payment: if you want deposits or full payment at booking, we would add payment processing and scope it separately. Without it, bookings would be confirmed without payment.\n2. Cancellations: once you define your policy, we would reflect it in the booking flow and confirmation messages. Until then we would not build cancellation rules.\n3. Content: we need to know who will provide service descriptions, prices, staff details and photos. If you would like us to help with writing or photography, that would be quoted separately.\n4. Timing: you mentioned wanting to launch soon. We cannot commit to a date until the scope, content and booking approach are agreed. Once we have your answers, we can propose a realistic schedule.\n\nNext steps: please reply to the questions above, and we will update this draft with a confirmed scope, timeline and price for your review. Nothing in this draft is final until you and we have both approved it.",
+        "risks": [
+          "Undefined launch date: 'soon' may conflict with content and decision delays, creating unrealistic expectations",
+          "Payment decision unresolved: adding payment processing later can significantly change scope, cost, and legal/compliance needs",
+          "Cancellation policy undefined: may cause rework of the booking flow and customer confusion or disputes",
+          "Content ownership unclear: missing text, photos or prices are a common cause of launch delays",
+          "Booking data and accounts: customer personal data and calendar access raise privacy, consent and account-ownership questions, and any third-party tool may carry fees",
+          "Possible existing booking system or calendar not disclosed, which could require integration or migration",
+          "Three staff with different services and availability can make scheduling rules more complex than expected",
+          "No budget stated, so the chosen approach (third-party tool versus custom build) may not fit expectations"
+        ]
+      },
+      "provenance": {
+        "provider": "Anthropic",
+        "model": "claude-sonnet-5-5",
+        "requestId": "fb03398d-ba4d-4dbf-81d1-420647cef96e",
+        "generatedAt": "2026-10-08T17:01:37.513Z"
+      },
+      "usage": {
+        "inputTokens": 1002,
+        "outputTokens": 1656
+      }
+    },
+    {
+      "id": "conflicting-shop-vi",
+      "language": "vi",
+      "brief": "Làm cửa hàng online có giỏ hàng, thanh toán, tài khoản khách và lịch sử mua hàng. Không muốn lưu dữ liệu khách hàng ở bất cứ đâu. Toàn bộ website phải ra mắt ngày mai nhưng danh sách sản phẩm, giá, ảnh và nội dung đến tuần sau mới có. Chưa chọn cổng thanh toán và chưa thống nhất ngân sách.",
+      "providerStatus": 200,
+      "providerRequestId": "req_011Cfq8T41AhhyZYnhSTXTtb",
+      "demoStatus": 502,
+      "elapsedMs": 16258,
+      "error": "incomplete"
+    }
+  ]
+}

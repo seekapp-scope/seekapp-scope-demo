@@ -30,6 +30,7 @@ test('complete API pipeline sends brief to Claude, validates schema and releases
 test('Vietnamese output selection reaches Claude as data',async () => {
   const h=harness(); await h.worker.fetch(h.req({...h.input,language:'vi'}),h.env);
   assert.equal(JSON.parse(h.calls.find(c=>c.url?.includes('anthropic')).body.messages[0].content).output_language,'Vietnamese');
+  assert.equal(h.calls.find(c=>c.url?.includes('anthropic')).body.max_tokens,3600);
 });
 test('reject foreign origin and unsupported methods before any provider call',async () => {
   const h=harness();assert.equal((await h.worker.fetch(h.req(h.input,{Origin:'https://evil.example'}),h.env)).status,403);
