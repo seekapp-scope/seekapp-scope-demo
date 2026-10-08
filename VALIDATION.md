@@ -48,3 +48,18 @@ The owner requested completion of the previously described publication/deploymen
 Cloudflare account admission was checked using the existing ignored token: Workers routes, Workers scripts, Pages projects and Turnstile widget inventory each returned HTTP 403 / code 10000. Wrangler also reported no authenticated OAuth session. These observations establish that the available authentication does not permit the requested deployment operations; they do not establish any defect in the application or explain Anthropic application decisions. No Cloudflare resource or setting was changed during these checks.
 
 Prepared a deployment helper with a read-only permission/inventory check and a separate explicit execution mode. Syntax validation passed; its read-only run stopped at the same Workers routes HTTP 403. Deployment, real public Turnstile and browser-to-Claude validation remain pending until the required account/zone permissions are supplied.
+
+
+## Production configuration and organization transfer — 9 October 2026 Vietnam
+
+**PRODUCTION CONFIGURATION:** added `wrangler.production.jsonc`, with `LIVE_ENABLED=true`, the public Turnstile site key, exact allowed origins and the two main-domain routes. This is separate from the disabled local-development configuration. API key, Turnstile secret and rate salt were stored in Cloudflare via stdin; none were written to tracked configuration.
+
+The updated token successfully deployed the Worker/SQLite Durable Object and assets, created a managed Turnstile widget, stored three secrets and created `seekapp.net/demo*` / `seekapp.net/api/scope*` routes. Required write permissions are therefore established by successful operations, beyond the read-only inventory check. Existing homepage assets were not uploaded or replaced.
+
+The owner explicitly chose organization transfer. GitHub confirmed the repository is public at https://github.com/seekapp-scope/seekapp-scope-demo. The local origin and both Worker configuration source URLs now point there; the public API configuration confirms the new source URL. Existing commit history was retained.
+
+Public probes: 11 paths returned HTTP 200, including the homepage, demo assets, demo and website legal pages, config, robots and sitemap. GET to the POST-only API returned the expected 405; foreign origin and invalid verification returned 403; missing consent returned 400. An invalid token reached real Siteverify and was rejected. These are expected guards, not successful Claude calls. Receipt: `validation/public-deployment.json`.
+
+An asset probe immediately after creating routes received 404; subsequent probes received 200. The helper now bounds retries of transient read-only asset checks to six five-second waits; paid POSTs are never retried. Python's default user agent received 403/1010 on the workers.dev preview while Node deployment probes succeeded there; all recorded seekapp.net probes passed. This observation does not identify the underlying Cloudflare rule or an Anthropic reviewer.
+
+Chrome loaded the actual public demo and its GitHub link. A contained-browser launch failed while installing network controls before navigation; that session was closed. A separate task-owned Chrome loaded the page normally. Its real managed Turnstile widget requested an interactive human checkbox. No challenge was solved automatically, token substituted or test bypass added. Successful public browser-to-Claude generation remains pending operator verification; prior real Claude checks were local handler tests.

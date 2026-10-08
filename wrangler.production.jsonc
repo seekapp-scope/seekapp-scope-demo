@@ -12,10 +12,10 @@
     ]
   },
   "vars": {
-    "LIVE_ENABLED": "false",
+    "LIVE_ENABLED": "true",
     "ANTHROPIC_MODEL": "claude-sonnet-5-5",
-    "ALLOWED_ORIGINS": "http://127.0.0.1:8787,http://localhost:8787",
-    "TURNSTILE_SITE_KEY": "",
+    "ALLOWED_ORIGINS": "https://seekapp.net,https://seekapp-scope-demo.canemmobile.workers.dev",
+    "TURNSTILE_SITE_KEY": "0x4AAAAAAFRhslKFmU7t7yto",
     "SOURCE_URL": "https://github.com/seekapp-scope/seekapp-scope-demo",
     "DAILY_LIMIT": "20",
     "PER_IP_LIMIT": "3"
@@ -38,5 +38,16 @@
   ],
   "observability": {
     "enabled": false
-  }
+  },
+  "account_id": "970e04c2f208851a9c256a2d0ddad5da",
+  "routes": [
+    {
+      "pattern": "seekapp.net/demo*",
+      "zone_id": "4b23068717b61c2a36e2411a90072929"
+    },
+    {
+      "pattern": "seekapp.net/api/scope*",
+      "zone_id": "4b23068717b61c2a36e2411a90072929"
+    }
+  ]
 }

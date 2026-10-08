@@ -15,7 +15,7 @@ if (!execute && !process.argv.includes('--check')) {
 const account = '970e04c2f208851a9c256a2d0ddad5da';
 const zone = '4b23068717b61c2a36e2411a90072929';
 const name = 'seekapp-scope-demo';
-const source = 'https://github.com/ceuit/seekapp-scope-demo';
+const source = 'https://github.com/seekapp-scope/seekapp-scope-demo';
 const widgetName = 'SeekApp Scope public demo';
 const routePatterns = ['seekapp.net/demo*', 'seekapp.net/api/scope*'];
 const configPath = path.join(root, 'wrangler.production.jsonc');
@@ -57,7 +57,15 @@ async function wrangler(args, input) {
 }
 async function publicCheck(origin, enabled) {
   for (const pathname of ['/demo', '/demo-assets/app.js', '/demo-assets/styles.css', '/demo-privacy', '/demo-terms']) {
-    const response = await fetch(origin + pathname, { signal: AbortSignal.timeout(20000) });
+    // New routes can briefly reach the old Pages origin while propagating.
+    // Retry reads only, with a bounded window; never retry a paid POST.
+    let response;
+    for (let attempt = 0; attempt < 7; attempt++) {
+      response = await fetch(origin + pathname, { signal: AbortSignal.timeout(20000) });
+      if (![404, 503].includes(response.status) || attempt === 6) break;
+      await response.arrayBuffer();
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
     if (response.status !== 200) throw new Error(`${origin}${pathname}: HTTP ${response.status}`);
     const body = await response.text();
     if (secrets.some(secret => body.includes(secret))) throw new Error('Credential found in public response');
@@ -98,7 +106,7 @@ try {
   }
   console.log(`Account, routes, Workers and Turnstile readable. Target: ${preview}`);
   if (!execute) {
-    console.log('Read-only check complete. Write permissions have not been proven.');
+    console.log('Read-only check complete. This invocation does not probe write permissions.');
     process.exit(0);
   }
   const keyText = await readFile(path.join(root, '../seekapp-scope/api.txt'), 'utf8');

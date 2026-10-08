@@ -2,7 +2,7 @@
 
 A small Claude application for freelancers and web agencies: brief → scope/questions/proposal → clarification answers → updated draft → review with evidence and suggestions. English and Vietnamese output; copy/download Markdown; no automatic delivery to clients.
 
-**Current state:** source is published on [GitHub](https://github.com/ceuit/seekapp-scope-demo). Three synthetic briefs, a clarification update and proposal reviews have passed the production handler using the real Claude Sonnet 5.5 API; see [the live evaluation](validation/LIVE-EVALUATION.md). Cloudflare deployment is awaiting account permissions; public deployment and real Turnstile verification remain pending. Live API calls are disabled by default. There are no prepared output fallbacks in the production code.
+**Current state:** source is published on [GitHub](https://github.com/seekapp-scope/seekapp-scope-demo). Three synthetic briefs, a clarification update and proposal reviews have passed the production handler using the real Claude Sonnet 5.5 API; see [the live evaluation](validation/LIVE-EVALUATION.md). The public demo is deployed at [seekapp.net/demo](https://seekapp.net/demo), with real Turnstile and live mode enabled in the separate production configuration. HTTP/config/security-guard checks passed; successful browser Turnstile-to-Claude validation is awaiting manual verification. Local development remains disabled by default. There are no prepared output fallbacks in the production code.
 
 Founder: Truong Can Em, Vietnam · contact@seekapp.net · [SeekApp](https://seekapp.net).
 
@@ -65,7 +65,7 @@ Production deployment, domain routes, GitHub push and paid API validation are se
 
 The founder authorized completing publication on 9 October 2026. `scripts/deploy.mjs` targets the existing SeekApp Cloudflare account and zone specifically. It reads the existing ignored `../seekapp-scope/.env.cloudflare` and the authorized `../seekapp-scope/api.txt` in memory. No credential is passed as a command argument or written into the public configuration.
 
-Required token permissions: Account **Workers Scripts Edit**, **Account Settings Read**, **Turnstile Edit**; Zone **Workers Routes Edit** and **Zone Read** for `seekapp.net`. The currently available token returns HTTP 403 for the Workers routes endpoint; Wrangler has no OAuth login. No temporary account or alternative domain is used to work around the missing permissions.
+Required token permissions: Account **Workers Scripts Edit**, **Account Settings Read**, **Turnstile Edit**; Zone **Workers Routes Edit** and **Zone Read** for `seekapp.net`. The founder supplied updated permissions on 9 October 2026. Worker deployment, Turnstile creation, secret storage and main-domain route creation all succeeded, establishing the required write permissions in practice. No temporary account was used.
 
 ```sh
 node scripts/deploy.mjs --check
@@ -75,7 +75,13 @@ node scripts/deploy.mjs --execute
 
 The read-only check inventories existing routes, Workers and Turnstile widgets. Execution holds on conflicting routes or an unrelated Worker, deploys disabled on the account's workers.dev hostname, creates a managed Turnstile widget for the exact two hosts, stores secrets through stdin, and validates public assets/config and API guards before adding `/demo*` and `/api/scope*` routes. It generates `wrangler.production.jsonc` containing public settings only and an ignored `.wrangler/deployment-receipt.json`. It preserves any existing rate-limit salt and refuses to repeat initial setup over an already live Worker. Actual browser Turnstile-to-Claude validation is a separate check; successful static checks do not establish it.
 
-### Manual deployment sequence
+### Subsequent production updates
+
+Use `wrangler deploy --config wrangler.production.jsonc` with the authorized Cloudflare token supplied through the process environment. Keep production secrets in Cloudflare. The default `wrangler.jsonc` remains a disabled local-development configuration; deploying it to the production Worker would disable the live demo. The initial-setup helper intentionally refuses to run over an already live Worker.
+
+Production routes are only `seekapp.net/demo*` and `seekapp.net/api/scope*`; the existing Pages homepage was not uploaded or replaced. The demo has its own linked privacy and terms notices. See [validation/public-deployment.json](validation/public-deployment.json) for public HTTP checks.
+
+### Initial deployment sequence (reference)
 
 1. Publish this **Worker with Static Assets**, initially with `LIVE_ENABLED=false`, to a new Workers preview hostname. This is not a static-only Pages upload; the API and Durable Object require a Worker deployment.
 2. Create a Turnstile widget permitting the exact demo hostname(s). Configure `TURNSTILE_SITE_KEY`; keep the widget action `scope-demo`.
@@ -99,7 +105,7 @@ Use fictional examples. Never publish a customer's brief, provider keys or unrev
 
 ## Git and GitHub
 
-This folder is a standalone Git repository. The local commit author is Truong Can Em <contact@seekapp.net>. Public source: https://github.com/ceuit/seekapp-scope-demo.
+This folder is a standalone Git repository. The local commit author is Truong Can Em <contact@seekapp.net>. Public source: https://github.com/seekapp-scope/seekapp-scope-demo.
 
 The owner authorized completing publication on 9 October 2026. Tracked files and all existing commits were scanned for Anthropic keys and credential files before publication. The application works without a public source repository; the source link is for transparency, not an Anthropic program requirement.
 

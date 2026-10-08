@@ -1,0 +1,107 @@
+{
+  "checkedAtUtc": "2026-10-08T17:39:41.749371+00:00",
+  "demo": "https://seekapp.net/demo",
+  "source": "https://github.com/seekapp-scope/seekapp-scope-demo",
+  "checks": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status": 200,
+      "contentType": "text/html"
+    },
+    {
+      "path": "/demo",
+      "method": "GET",
+      "status": 200,
+      "contentType": "text/html"
+    },
+    {
+      "path": "/demo-assets/app.js",
+      "method": "GET",
+      "status": 200,
+      "contentType": "text/javascript"
+    },
+    {
+      "path": "/demo-assets/styles.css",
+      "method": "GET",
+      "status": 200,
+      "contentType": "text/css"
+    },
+    {
+      "path": "/demo-privacy",
+      "method": "GET",
+      "status": 200,
+      "contentType": "text/html"
+    },
+    {
+      "path": "/demo-terms",
+      "method": "GET",
+      "status": 200,
+      "contentType": "text/html"
+    },
+    {
+      "path": "/api/scope/config",
+      "method": "GET",
+      "status": 200,
+      "contentType": "application/json"
+    },
+    {
+      "path": "/privacy/",
+      "method": "GET",
+      "status": 200,
+      "contentType": "text/html"
+    },
+    {
+      "path": "/terms/",
+      "method": "GET",
+      "status": 200,
+      "contentType": "text/html"
+    },
+    {
+      "path": "/robots.txt",
+      "method": "GET",
+      "status": 200,
+      "contentType": "text/plain"
+    },
+    {
+      "path": "/sitemap.xml",
+      "method": "GET",
+      "status": 200,
+      "contentType": "application/xml"
+    },
+    {
+      "check": "method guard",
+      "path": "/api/scope",
+      "method": "GET",
+      "status": 405,
+      "error": "method"
+    },
+    {
+      "check": "foreign origin",
+      "path": "/api/scope",
+      "method": "POST",
+      "status": 403,
+      "error": "origin"
+    },
+    {
+      "check": "missing consent",
+      "path": "/api/scope",
+      "method": "POST",
+      "status": 400,
+      "error": "input"
+    },
+    {
+      "check": "invalid verification",
+      "path": "/api/scope",
+      "method": "POST",
+      "status": 403,
+      "error": "verification"
+    }
+  ],
+  "successfulRealBrowserTurnstileToClaude": "pending human verification",
+  "notes": [
+    "An immediate post-route asset probe returned 404; subsequent reads returned 200.",
+    "Python urllib with its default user agent returned 403/1010 on workers.dev, while Node deployment probes passed; seekapp.net probes passed.",
+    "Blocked API guard probes did not return Claude output."
+  ]
+}
