@@ -83,9 +83,9 @@ Use fictional examples. Never publish a customer's brief, provider keys or unrev
 
 ## Git and GitHub
 
-This folder is a standalone Git repository. The local commit author is Truong Can Em <contact@seekapp.net>. No remote repository is created or pushed by local setup.
+This folder is a standalone Git repository. The local commit author is Truong Can Em <contact@seekapp.net>. Public source: https://github.com/ceuit/seekapp-scope-demo.
 
-After the owner chooses a GitHub account and confirms publishing, create a public repository named `seekapp-scope-demo`, add its actual URL as `origin`, and push `main`. Review the tracked files first. The application works without a public source repository; the source link is for transparency, not an Anthropic program requirement.
+The owner authorized completing publication on 9 October 2026. Tracked files and all existing commits were scanned for Anthropic keys and credential files before publication. The application works without a public source repository; the source link is for transparency, not an Anthropic program requirement.
 
 ## Documentation
 
