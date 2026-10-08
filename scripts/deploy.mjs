@@ -57,7 +57,7 @@ async function wrangler(args, input) {
 }
 async function publicCheck(origin, enabled) {
   for (const pathname of ['/demo', '/demo-assets/app.js', '/demo-assets/styles.css', '/demo-privacy', '/demo-terms']) {
-    // New routes can briefly reach the old Pages origin while propagating.
+    // New routes can briefly reach the old homepage origin while propagating.
     // Retry reads only, with a bounded window; never retry a paid POST.
     let response;
     for (let attempt = 0; attempt < 7; attempt++) {

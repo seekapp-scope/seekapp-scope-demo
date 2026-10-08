@@ -59,7 +59,7 @@ The prompt separates facts from assumptions, highlights contradictions and avoid
 
 ## Deployment after owner approval
 
-Production deployment, domain routes, GitHub push and paid API validation are separate operator-approved steps. Do not overwrite the existing SeekApp Pages site with this project.
+Production deployment, domain routes, GitHub push and paid API validation are separate operator-approved steps. Do not overwrite the existing SeekApp homepage Worker with this project.
 
 ### Prepared deployment for seekapp.net
 
@@ -79,7 +79,7 @@ The read-only check inventories existing routes, Workers and Turnstile widgets. 
 
 Use `wrangler deploy --config wrangler.production.jsonc` with the authorized Cloudflare token supplied through the process environment. Keep production secrets in Cloudflare. The default `wrangler.jsonc` remains a disabled local-development configuration; deploying it to the production Worker would disable the live demo. The initial-setup helper intentionally refuses to run over an already live Worker.
 
-Production routes are only `seekapp.net/demo*` and `seekapp.net/api/scope*`; the existing Pages homepage was not uploaded or replaced. The demo has its own linked privacy and terms notices. See [validation/public-deployment.json](validation/public-deployment.json) for public HTTP checks.
+Production routes are only `seekapp.net/demo*` and `seekapp.net/api/scope*`; the existing homepage Worker was not uploaded or replaced. The demo has its own linked privacy and terms notices. See [validation/public-deployment.json](validation/public-deployment.json) for public HTTP checks.
 
 ### Initial deployment sequence (reference)
 
@@ -88,7 +88,7 @@ Production routes are only `seekapp.net/demo*` and `seekapp.net/api/scope*`; the
 3. Set `ALLOWED_ORIGINS` to the exact deployed HTTPS origin(s), comma-separated; no trailing slash. Keep localhost only for local development.
 4. Store the three secrets using `wrangler secret put ANTHROPIC_API_KEY`, `wrangler secret put TURNSTILE_SECRET_KEY` and `wrangler secret put RATE_LIMIT_SALT`. Use a randomly generated salt. Enter secrets interactively; never put them in shell history or this README.
 5. After approval for API costs, set `LIVE_ENABLED=true`, redeploy and run the three evaluation briefs below through the live UI. Record actual observations, not mocked results.
-6. Once accepted, add same-zone Worker routes `seekapp.net/demo*` and `seekapp.net/api/scope*`. All demo assets and demo legal pages use `/demo…` paths. Leave the existing homepage and its assets under Pages. Review routes against any existing Workers routes before changing them.
+6. Once accepted, add same-zone Worker routes `seekapp.net/demo*` and `seekapp.net/api/scope*`. All demo assets and demo legal pages use `/demo…` paths. Leave the existing homepage and its assets on the separate `seekapp-scope` Worker. Review routes against any existing Workers routes before changing them.
 7. Set `SOURCE_URL` to the actual public GitHub repo URL to expose the **Source on GitHub** link. It stays hidden until configured; no invented repository link is shown.
 
 The demo uses `/demo-privacy` and `/demo-terms` for disclosures specific to live processing. Before public release, update the existing site's privacy policy to link to the live-demo notice and remove any claim that all public demo briefs remain exclusively in the browser. Landing-page wording should describe only the live checks actually completed.

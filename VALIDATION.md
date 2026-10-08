@@ -79,3 +79,10 @@ Receipt: `validation/public-workflow-results.json`, containing fictional input c
 ## Turnstile Non-Interactive — owner-requested production setting change
 
 Changed only the existing demo widget from Managed to Non-Interactive through Cloudflare API, then read back its configuration. The widget name, hostnames, public site key and server secret remained unchanged. No Worker redeployment or secret rotation was required. Updated the setup helper so future widget creation uses Non-Interactive. Public config still reports enabled; a POST with an invalid verification token still returns HTTP 403 / verification before Claude or budget admission. No paid Claude request was made for this change. Receipt: `validation/turnstile-mode-change.json`.
+
+
+## Homepage GitHub links and hosting correction — 9 October 2026 Vietnam
+
+The owner requested a visible GitHub link on the homepage. Cloudflare inventory confirmed that the homepage is an assets-only Worker named `seekapp-scope`, serving custom domains `seekapp.net` and `www.seekapp.net`; it is not a Pages project. Earlier references to Pages hosting were an assumption. Deployment guidance now identifies the actual separate homepage Worker.
+
+Added two source links, beside the live-demo CTA and in the footer. Deployment used 17 assets copied from the previously deployed homepage Worker, replacing only index.html after verifying its sole source changes were the two link lines. Dry-run validation passed before deploying version `ea15aced-134e-46e1-a783-ecae00a4859c`. Both public homepage domains returned HTTP 200 and contained the two correct GitHub links with noopener/noreferrer. The live demo, its JS asset, privacy, terms, robots and sitemap returned 200; public API config remained enabled with the organization source URL. No paid API call was made. The demo route patterns and separate demo Worker were retained.
