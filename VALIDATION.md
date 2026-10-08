@@ -40,3 +40,11 @@ Four additional backend tests cover follow-up context, typed review results, inv
 Three newly authorized real Claude calls were made with the previously approved key: one refinement, one review, and a second review after tightening the prompt to reduce unsupported findings. All three returned demo HTTP 200. This uses the same local-only Siteverify substitution/in-memory budget as earlier paid checks; public Turnstile and deployment remain untested. The fixture draft deliberately contains a false deadline/price promise. The review identifies it, but some lower-severity findings remain debatable, so the UI does not present the report as approval or certification.
 
 Receipts: validation/live-workflow-results.json and validation/live-workflow-review-retry.json. All briefs and answers are fictional. Key excluded from tracked files; no production deployment or push performed.
+
+## GitHub publication and Cloudflare admission — 9 October 2026 Vietnam
+
+The owner requested completion of the previously described publication/deployment steps. GitHub authentication identified `ceuit`; the target repository did not previously exist. The three existing commits were inspected for credential files and Anthropic secret patterns before creating the public repository and pushing main. Publication succeeded at https://github.com/ceuit/seekapp-scope-demo. Syntax checks and all 14 backend tests passed again before publication.
+
+Cloudflare account admission was checked using the existing ignored token: Workers routes, Workers scripts, Pages projects and Turnstile widget inventory each returned HTTP 403 / code 10000. Wrangler also reported no authenticated OAuth session. These observations establish that the available authentication does not permit the requested deployment operations; they do not establish any defect in the application or explain Anthropic application decisions. No Cloudflare resource or setting was changed during these checks.
+
+Prepared a deployment helper with a read-only permission/inventory check and a separate explicit execution mode. Syntax validation passed; its read-only run stopped at the same Workers routes HTTP 403. Deployment, real public Turnstile and browser-to-Claude validation remain pending until the required account/zone permissions are supplied.
